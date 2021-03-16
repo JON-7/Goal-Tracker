@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="17709" systemVersion="20D80" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
+    <entity name="Goal" representedClassName="Goal" syncable="YES">
+        <attribute name="cellColor" optional="YES" attributeType="Transformable" valueTransformerName="UIColorValueTransformer" customClassName="UIColor"/>
+        <attribute name="date" optional="YES" attributeType="String"/>
+        <attribute name="endNum" optional="YES" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
+        <attribute name="index" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="isGainGoal" attributeType="Boolean" usesScalarValueType="YES"/>
+        <attribute name="isGoalComplete" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
+        <attribute name="name" attributeType="String" minValueString="1"/>
+        <attribute name="startNum" optional="YES" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
+        <relationship name="notes" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Note" inverseName="goal" inverseEntity="Note"/>
+        <relationship name="subGoals" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="SubGoal" inverseName="goal" inverseEntity="SubGoal"/>
+    </entity>
+    <entity name="Note" representedClassName="Note" syncable="YES">
+        <attribute name="date" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="lastEdited" optional="YES" attributeType="String"/>
+        <attribute name="noteText" optional="YES" attributeType="String"/>
+        <attribute name="title" optional="YES" attributeType="String"/>
+        <relationship name="goal" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Goal" inverseName="notes" inverseEntity="Goal"/>
+    </entity>
+    <entity name="SubGoal" representedClassName="SubGoal" syncable="YES">
+        <attribute name="cellColor" optional="YES" attributeType="Transformable" valueTransformerName="UIColorValueTransformer" customClassName="UIColor"/>
+        <attribute name="date" optional="YES" attributeType="String"/>
+        <attribute name="endNum" optional="YES" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
+        <attribute name="index" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="isGainGoal" attributeType="Boolean" usesScalarValueType="YES"/>
+        <attribute name="isGoalComplete" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
+        <attribute name="name" attributeType="String"/>
+        <attribute name="startNum" optional="YES" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
+        <relationship name="goal" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Goal" inverseName="subGoals" inverseEntity="Goal"/>
+    </entity>
+    <elements>
+        <element name="Goal" positionX="-27" positionY="18" width="128" height="179"/>
+        <element name="Note" positionX="0" positionY="99" width="128" height="104"/>
+        <element name="SubGoal" positionX="18" positionY="90" width="128" height="164"/>
+    </elements>
+</model>

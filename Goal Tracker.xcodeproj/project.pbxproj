@@ -1,0 +1,487 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 50;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		FC3DDC0625FDCA7200215342 /* Goal+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC3DDC0025FDCA7200215342 /* Goal+CoreDataClass.swift */; };
+		FC3DDC0725FDCA7200215342 /* Goal+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC3DDC0125FDCA7200215342 /* Goal+CoreDataProperties.swift */; };
+		FC3DDC0825FDCA7200215342 /* SubGoal+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC3DDC0225FDCA7200215342 /* SubGoal+CoreDataClass.swift */; };
+		FC3DDC0925FDCA7200215342 /* SubGoal+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC3DDC0325FDCA7200215342 /* SubGoal+CoreDataProperties.swift */; };
+		FC3DDC0A25FDCA7200215342 /* Note+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC3DDC0425FDCA7200215342 /* Note+CoreDataClass.swift */; };
+		FC3DDC0B25FDCA7200215342 /* Note+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC3DDC0525FDCA7200215342 /* Note+CoreDataProperties.swift */; };
+		FC79B3CB25DCBC4E00256986 /* TableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC79B3CA25DCBC4E00256986 /* TableViewCell.swift */; };
+		FC79B3CE25DCD1E500256986 /* ViewNoteVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC79B3CD25DCD1E500256986 /* ViewNoteVC.swift */; };
+		FC79B3E425DCE5C100256986 /* CreateNoteVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC79B3E325DCE5C100256986 /* CreateNoteVC.swift */; };
+		FC79B47725E4726A00256986 /* ProgressBarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC79B47625E4726A00256986 /* ProgressBarView.swift */; };
+		FC79B47A25E479BB00256986 /* DaysRemainingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC79B47925E479BB00256986 /* DaysRemainingView.swift */; };
+		FC79B4C525E629A000256986 /* UIColorValueTransformer.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC79B4C425E629A000256986 /* UIColorValueTransformer.swift */; };
+		FCC9372425D732EA00A5EAAB /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = FCC9372325D732EA00A5EAAB /* AppDelegate.swift */; };
+		FCC9372625D732EA00A5EAAB /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = FCC9372525D732EA00A5EAAB /* SceneDelegate.swift */; };
+		FCC9372E25D732EA00A5EAAB /* Goal_Tracker.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = FCC9372C25D732EA00A5EAAB /* Goal_Tracker.xcdatamodeld */; };
+		FCC9373025D732ED00A5EAAB /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = FCC9372F25D732ED00A5EAAB /* Assets.xcassets */; };
+		FCC9373325D732ED00A5EAAB /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = FCC9373125D732ED00A5EAAB /* LaunchScreen.storyboard */; };
+		FCC937AA25DA016D00A5EAAB /* GoalTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = FCC937A625DA016D00A5EAAB /* GoalTextField.swift */; };
+		FCC937AB25DA016D00A5EAAB /* GoalButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = FCC937A725DA016D00A5EAAB /* GoalButton.swift */; };
+		FCC937AC25DA016D00A5EAAB /* CollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = FCC937A825DA016D00A5EAAB /* CollectionViewCell.swift */; };
+		FCC937AD25DA016D00A5EAAB /* GoalTextLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = FCC937A925DA016D00A5EAAB /* GoalTextLabel.swift */; };
+		FCC9380925DAF61400A5EAAB /* HomeVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = FCC9380825DAF61400A5EAAB /* HomeVC.swift */; };
+		FCC9380D25DAF64A00A5EAAB /* DataManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = FCC9380C25DAF64A00A5EAAB /* DataManager.swift */; };
+		FCC9381B25DB003900A5EAAB /* GoalVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = FCC9381A25DB003900A5EAAB /* GoalVC.swift */; };
+		FCC9381F25DB006700A5EAAB /* SubGoalsVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = FCC9381E25DB006700A5EAAB /* SubGoalsVC.swift */; };
+		FCC9382225DB007E00A5EAAB /* NotesVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = FCC9382125DB007E00A5EAAB /* NotesVC.swift */; };
+		FCC9382625DB0F5A00A5EAAB /* CreateGoalVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = FCC9382525DB0F5A00A5EAAB /* CreateGoalVC.swift */; };
+		FCC9385E25DB998500A5EAAB /* ViewSubGoalVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = FCC9385D25DB998500A5EAAB /* ViewSubGoalVC.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		FC3DDC0025FDCA7200215342 /* Goal+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Goal+CoreDataClass.swift"; sourceTree = "<group>"; };
+		FC3DDC0125FDCA7200215342 /* Goal+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Goal+CoreDataProperties.swift"; sourceTree = "<group>"; };
+		FC3DDC0225FDCA7200215342 /* SubGoal+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SubGoal+CoreDataClass.swift"; sourceTree = "<group>"; };
+		FC3DDC0325FDCA7200215342 /* SubGoal+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SubGoal+CoreDataProperties.swift"; sourceTree = "<group>"; };
+		FC3DDC0425FDCA7200215342 /* Note+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Note+CoreDataClass.swift"; sourceTree = "<group>"; };
+		FC3DDC0525FDCA7200215342 /* Note+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Note+CoreDataProperties.swift"; sourceTree = "<group>"; };
+		FC79B3CA25DCBC4E00256986 /* TableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TableViewCell.swift; sourceTree = "<group>"; };
+		FC79B3CD25DCD1E500256986 /* ViewNoteVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewNoteVC.swift; sourceTree = "<group>"; };
+		FC79B3E325DCE5C100256986 /* CreateNoteVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateNoteVC.swift; sourceTree = "<group>"; };
+		FC79B47625E4726A00256986 /* ProgressBarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProgressBarView.swift; sourceTree = "<group>"; };
+		FC79B47925E479BB00256986 /* DaysRemainingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DaysRemainingView.swift; sourceTree = "<group>"; };
+		FC79B4C425E629A000256986 /* UIColorValueTransformer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIColorValueTransformer.swift; sourceTree = "<group>"; };
+		FCC9372025D732EA00A5EAAB /* Goal Tracker.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Goal Tracker.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		FCC9372325D732EA00A5EAAB /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		FCC9372525D732EA00A5EAAB /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
+		FCC9372D25D732EA00A5EAAB /* Goal_Tracker.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Goal_Tracker.xcdatamodel; sourceTree = "<group>"; };
+		FCC9372F25D732ED00A5EAAB /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		FCC9373225D732ED00A5EAAB /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
+		FCC9373425D732ED00A5EAAB /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		FCC937A625DA016D00A5EAAB /* GoalTextField.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GoalTextField.swift; sourceTree = "<group>"; };
+		FCC937A725DA016D00A5EAAB /* GoalButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GoalButton.swift; sourceTree = "<group>"; };
+		FCC937A825DA016D00A5EAAB /* CollectionViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CollectionViewCell.swift; sourceTree = "<group>"; };
+		FCC937A925DA016D00A5EAAB /* GoalTextLabel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GoalTextLabel.swift; sourceTree = "<group>"; };
+		FCC9380825DAF61400A5EAAB /* HomeVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeVC.swift; sourceTree = "<group>"; };
+		FCC9380C25DAF64A00A5EAAB /* DataManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataManager.swift; sourceTree = "<group>"; };
+		FCC9381A25DB003900A5EAAB /* GoalVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoalVC.swift; sourceTree = "<group>"; };
+		FCC9381E25DB006700A5EAAB /* SubGoalsVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubGoalsVC.swift; sourceTree = "<group>"; };
+		FCC9382125DB007E00A5EAAB /* NotesVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotesVC.swift; sourceTree = "<group>"; };
+		FCC9382525DB0F5A00A5EAAB /* CreateGoalVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateGoalVC.swift; sourceTree = "<group>"; };
+		FCC9385D25DB998500A5EAAB /* ViewSubGoalVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewSubGoalVC.swift; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		FCC9371D25D732EA00A5EAAB /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		FCC9371725D732EA00A5EAAB = {
+			isa = PBXGroup;
+			children = (
+				FCC9372225D732EA00A5EAAB /* Goal Tracker */,
+				FCC9372125D732EA00A5EAAB /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		FCC9372125D732EA00A5EAAB /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				FCC9372025D732EA00A5EAAB /* Goal Tracker.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		FCC9372225D732EA00A5EAAB /* Goal Tracker */ = {
+			isa = PBXGroup;
+			children = (
+				FCC9380B25DAF63600A5EAAB /* Managers */,
+				FCC937B325DA01A400A5EAAB /* Views */,
+				FCC9374325D7339B00A5EAAB /* Models */,
+				FCC9374125D7336500A5EAAB /* Custom Views */,
+				FCC9374225D7336F00A5EAAB /* Resources */,
+				FCC9373125D732ED00A5EAAB /* LaunchScreen.storyboard */,
+				FCC9373425D732ED00A5EAAB /* Info.plist */,
+			);
+			path = "Goal Tracker";
+			sourceTree = "<group>";
+		};
+		FCC9374125D7336500A5EAAB /* Custom Views */ = {
+			isa = PBXGroup;
+			children = (
+				FCC937A725DA016D00A5EAAB /* GoalButton.swift */,
+				FCC937A625DA016D00A5EAAB /* GoalTextField.swift */,
+				FCC937A925DA016D00A5EAAB /* GoalTextLabel.swift */,
+				FCC937A825DA016D00A5EAAB /* CollectionViewCell.swift */,
+				FC79B3CA25DCBC4E00256986 /* TableViewCell.swift */,
+				FC79B47625E4726A00256986 /* ProgressBarView.swift */,
+				FC79B47925E479BB00256986 /* DaysRemainingView.swift */,
+			);
+			path = "Custom Views";
+			sourceTree = "<group>";
+		};
+		FCC9374225D7336F00A5EAAB /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				FCC9372325D732EA00A5EAAB /* AppDelegate.swift */,
+				FCC9372525D732EA00A5EAAB /* SceneDelegate.swift */,
+				FCC9372F25D732ED00A5EAAB /* Assets.xcassets */,
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
+		FCC9374325D7339B00A5EAAB /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				FC3DDC0025FDCA7200215342 /* Goal+CoreDataClass.swift */,
+				FC3DDC0125FDCA7200215342 /* Goal+CoreDataProperties.swift */,
+				FC3DDC0225FDCA7200215342 /* SubGoal+CoreDataClass.swift */,
+				FC3DDC0325FDCA7200215342 /* SubGoal+CoreDataProperties.swift */,
+				FC3DDC0425FDCA7200215342 /* Note+CoreDataClass.swift */,
+				FC3DDC0525FDCA7200215342 /* Note+CoreDataProperties.swift */,
+				FCC9372C25D732EA00A5EAAB /* Goal_Tracker.xcdatamodeld */,
+				FC79B4C425E629A000256986 /* UIColorValueTransformer.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		FCC937B325DA01A400A5EAAB /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				FCC9381925DAFFFB00A5EAAB /* TabBar */,
+				FCC9380825DAF61400A5EAAB /* HomeVC.swift */,
+				FCC9382525DB0F5A00A5EAAB /* CreateGoalVC.swift */,
+				FCC9385D25DB998500A5EAAB /* ViewSubGoalVC.swift */,
+				FC79B3CD25DCD1E500256986 /* ViewNoteVC.swift */,
+				FC79B3E325DCE5C100256986 /* CreateNoteVC.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		FCC9380B25DAF63600A5EAAB /* Managers */ = {
+			isa = PBXGroup;
+			children = (
+				FCC9380C25DAF64A00A5EAAB /* DataManager.swift */,
+			);
+			path = Managers;
+			sourceTree = "<group>";
+		};
+		FCC9381925DAFFFB00A5EAAB /* TabBar */ = {
+			isa = PBXGroup;
+			children = (
+				FCC9381A25DB003900A5EAAB /* GoalVC.swift */,
+				FCC9381E25DB006700A5EAAB /* SubGoalsVC.swift */,
+				FCC9382125DB007E00A5EAAB /* NotesVC.swift */,
+			);
+			path = TabBar;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		FCC9371F25D732EA00A5EAAB /* Goal Tracker */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = FCC9373725D732ED00A5EAAB /* Build configuration list for PBXNativeTarget "Goal Tracker" */;
+			buildPhases = (
+				FCC9371C25D732EA00A5EAAB /* Sources */,
+				FCC9371D25D732EA00A5EAAB /* Frameworks */,
+				FCC9371E25D732EA00A5EAAB /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "Goal Tracker";
+			productName = "Goal Tracker";
+			productReference = FCC9372025D732EA00A5EAAB /* Goal Tracker.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		FCC9371825D732EA00A5EAAB /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastSwiftUpdateCheck = 1240;
+				LastUpgradeCheck = 1240;
+				TargetAttributes = {
+					FCC9371F25D732EA00A5EAAB = {
+						CreatedOnToolsVersion = 12.4;
+					};
+				};
+			};
+			buildConfigurationList = FCC9371B25D732EA00A5EAAB /* Build configuration list for PBXProject "Goal Tracker" */;
+			compatibilityVersion = "Xcode 9.3";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = FCC9371725D732EA00A5EAAB;
+			productRefGroup = FCC9372125D732EA00A5EAAB /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				FCC9371F25D732EA00A5EAAB /* Goal Tracker */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		FCC9371E25D732EA00A5EAAB /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				FCC9373325D732ED00A5EAAB /* LaunchScreen.storyboard in Resources */,
+				FCC9373025D732ED00A5EAAB /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		FCC9371C25D732EA00A5EAAB /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				FCC937AC25DA016D00A5EAAB /* CollectionViewCell.swift in Sources */,
+				FCC9382225DB007E00A5EAAB /* NotesVC.swift in Sources */,
+				FC3DDC0725FDCA7200215342 /* Goal+CoreDataProperties.swift in Sources */,
+				FC3DDC0B25FDCA7200215342 /* Note+CoreDataProperties.swift in Sources */,
+				FCC937AA25DA016D00A5EAAB /* GoalTextField.swift in Sources */,
+				FCC9381B25DB003900A5EAAB /* GoalVC.swift in Sources */,
+				FC79B3CB25DCBC4E00256986 /* TableViewCell.swift in Sources */,
+				FC3DDC0925FDCA7200215342 /* SubGoal+CoreDataProperties.swift in Sources */,
+				FC3DDC0A25FDCA7200215342 /* Note+CoreDataClass.swift in Sources */,
+				FCC9380925DAF61400A5EAAB /* HomeVC.swift in Sources */,
+				FC79B47A25E479BB00256986 /* DaysRemainingView.swift in Sources */,
+				FCC9381F25DB006700A5EAAB /* SubGoalsVC.swift in Sources */,
+				FC3DDC0625FDCA7200215342 /* Goal+CoreDataClass.swift in Sources */,
+				FC79B4C525E629A000256986 /* UIColorValueTransformer.swift in Sources */,
+				FC79B3E425DCE5C100256986 /* CreateNoteVC.swift in Sources */,
+				FCC9385E25DB998500A5EAAB /* ViewSubGoalVC.swift in Sources */,
+				FCC9372425D732EA00A5EAAB /* AppDelegate.swift in Sources */,
+				FC79B47725E4726A00256986 /* ProgressBarView.swift in Sources */,
+				FCC9372625D732EA00A5EAAB /* SceneDelegate.swift in Sources */,
+				FCC937AB25DA016D00A5EAAB /* GoalButton.swift in Sources */,
+				FC3DDC0825FDCA7200215342 /* SubGoal+CoreDataClass.swift in Sources */,
+				FC79B3CE25DCD1E500256986 /* ViewNoteVC.swift in Sources */,
+				FCC937AD25DA016D00A5EAAB /* GoalTextLabel.swift in Sources */,
+				FCC9380D25DAF64A00A5EAAB /* DataManager.swift in Sources */,
+				FCC9372E25D732EA00A5EAAB /* Goal_Tracker.xcdatamodeld in Sources */,
+				FCC9382625DB0F5A00A5EAAB /* CreateGoalVC.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXVariantGroup section */
+		FCC9373125D732ED00A5EAAB /* LaunchScreen.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				FCC9373225D732ED00A5EAAB /* Base */,
+			);
+			name = LaunchScreen.storyboard;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		FCC9373525D732ED00A5EAAB /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 14.1;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		FCC9373625D732ED00A5EAAB /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 14.1;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		FCC9373825D732ED00A5EAAB /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = B43W8HTAW5;
+				INFOPLIST_FILE = "Goal Tracker/Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = "com.jesco.Goal-Tracker";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Debug;
+		};
+		FCC9373925D732ED00A5EAAB /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = B43W8HTAW5;
+				INFOPLIST_FILE = "Goal Tracker/Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = "com.jesco.Goal-Tracker";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		FCC9371B25D732EA00A5EAAB /* Build configuration list for PBXProject "Goal Tracker" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				FCC9373525D732ED00A5EAAB /* Debug */,
+				FCC9373625D732ED00A5EAAB /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		FCC9373725D732ED00A5EAAB /* Build configuration list for PBXNativeTarget "Goal Tracker" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				FCC9373825D732ED00A5EAAB /* Debug */,
+				FCC9373925D732ED00A5EAAB /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+
+/* Begin XCVersionGroup section */
+		FCC9372C25D732EA00A5EAAB /* Goal_Tracker.xcdatamodeld */ = {
+			isa = XCVersionGroup;
+			children = (
+				FCC9372D25D732EA00A5EAAB /* Goal_Tracker.xcdatamodel */,
+			);
+			currentVersion = FCC9372D25D732EA00A5EAAB /* Goal_Tracker.xcdatamodel */;
+			path = Goal_Tracker.xcdatamodeld;
+			sourceTree = "<group>";
+			versionGroupType = wrapper.xcdatamodel;
+		};
+/* End XCVersionGroup section */
+	};
+	rootObject = FCC9371825D732EA00A5EAAB /* Project object */;
+}

@@ -9,8 +9,6 @@ import UIKit
 
 class CreateGoalVC: UIViewController {
     
-    //let GainOrLose: String
-    
     let goalType: String
     let action: String
     let goalTFText: String?
@@ -22,11 +20,10 @@ class CreateGoalVC: UIViewController {
     
     var currentGoalIndex: Int?
     var currentSubIndex: Int?
-
     
     var color: UIColor?
     // default color shown when creating a new goal
-    let defaultColors = [ #colorLiteral(red: 0.08703120798, green: 0.530375123, blue: 0.6547247767, alpha: 1), #colorLiteral(red: 0.3788999319, green: 0.6952251792, blue: 0.3541084528, alpha: 1), #colorLiteral(red: 0.7887167931, green: 0.7959396243, blue: 0.9998794198, alpha: 1), #colorLiteral(red: 0.4156676531, green: 0.7495350242, blue: 0.9007849097, alpha: 1) ]
+    let defaultColors = [ #colorLiteral(red: 0.8870380521, green: 0.5724834204, blue: 0.9965009093, alpha: 1), #colorLiteral(red: 0.6950762272, green: 0.8662387729, blue: 0.5456559658, alpha: 1), #colorLiteral(red: 0.7887167931, green: 0.7959396243, blue: 0.9998794198, alpha: 1), #colorLiteral(red: 0.4156676531, green: 0.7495350242, blue: 0.9007849097, alpha: 1) ]
     private let colorPicker = UIColorPickerViewController()
     
     required init(goalType: String, action: String, goalTFText: String, dateTFText: String?, currentNumTFText: String?, finalNumTFText: String?, buttonTitle: String, isGainGoal: Bool) {
@@ -71,7 +68,7 @@ class CreateGoalVC: UIViewController {
     let deleteButton = GoalButton()
     let trailingPadding = CGFloat(5)
     let topPadding = CGFloat(19)
-    let heightMultiplier = CGFloat(0.07)
+    let heightMultiplier = CGFloat(0.06)
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -153,7 +150,6 @@ class CreateGoalVC: UIViewController {
                 goalTextfield.topAnchor.constraint(equalTo: createGoalLabel.bottomAnchor, constant: -20),
                 goalTextfield.leadingAnchor.constraint(equalTo: goalLabel.trailingAnchor),
                 goalTextfield.trailingAnchor.constraint(equalTo: view.layoutMarginsGuide.trailingAnchor, constant: -trailingPadding),
-                //goalTextfield.heightAnchor.constraint(equalToConstant: 50)
                 goalTextfield.heightAnchor.constraint(equalToConstant: view.bounds.height * heightMultiplier)
             ])
         } else {
@@ -256,7 +252,6 @@ class CreateGoalVC: UIViewController {
         ])
         colorButton.addTarget(self, action: #selector(showColorPicker), for: .touchUpInside)
     }
-    
     
     @objc private func showColorPicker() {
         colorPicker.supportsAlpha = true
@@ -447,13 +442,13 @@ class CreateGoalVC: UIViewController {
             // Create goal
             if action == "create" {
                 if goalType == "main" {
-                    let goal = DataManager.shared.goal(name: goalName, date: goalDate, startNum: startNum, endNum: endNum, cellColor: color!, index: HomeVC.goals.count, isGainGoal: gainButton.isSelected)
+                    let goal = DataManager.shared.goal(name: goalName, date: goalDate, startNum: startNum, endNum: endNum, cellColor: color!, index: HomeVC.goals.count, isGainGoal: gainButton.isSelected, isGoalComplete: false)
                     HomeVC.goals.append(goal)
                     DataManager.shared.save()
                     NotificationCenter.default.post(name: NSNotification.Name(rawValue: "newDataNotif"), object: nil)
                     dismiss(animated: true)
                 } else if goalType == "sub" {
-                    let subGoal = DataManager.shared.subGoal(name: goalName, date: goalDate, startNum: startNum, endNum: endNum, cellColor: color!, index: SubGoalsVC.subGoals.count, isGainGoal: isGainGoal, goal: HomeVC.goals[currentGoalIndex!])
+                    let subGoal = DataManager.shared.subGoal(name: goalName, date: goalDate, startNum: startNum, endNum: endNum, cellColor: color!, index: SubGoalsVC.subGoals.count, isGainGoal: isGainGoal, isGoalComplete: false, goal: HomeVC.goals[currentGoalIndex!])
                     SubGoalsVC.subGoals.append(subGoal)
                     DataManager.shared.save()
                     NotificationCenter.default.post(name: NSNotification.Name(rawValue: "newDataNotif"), object: nil)

@@ -46,7 +46,7 @@ class DataManager {
     }()
     
     
-    func goal(name: String?, date: String?, startNum: Double?, endNum: Double?, cellColor: UIColor, index: Int, isGainGoal: Bool) -> Goal {
+    func goal(name: String?, date: String?, startNum: Double?, endNum: Double?, cellColor: UIColor, index: Int, isGainGoal: Bool, isGoalComplete: Bool) -> Goal {
         let goal = Goal(context: persistentContainer.viewContext)
         goal.name = name
         goal.date = date
@@ -55,6 +55,7 @@ class DataManager {
         goal.cellColor = cellColor
         goal.index = Int16(index)
         goal.isGainGoal = isGainGoal
+        goal.isGoalComplete = isGoalComplete
         return goal
     }
     
@@ -72,7 +73,7 @@ class DataManager {
         return fetchGoals
     }
     
-    func subGoal(name: String?, date: String?, startNum: Double?, endNum: Double?, cellColor: UIColor, index: Int, isGainGoal: Bool, goal: Goal) -> SubGoal {
+    func subGoal(name: String?, date: String?, startNum: Double?, endNum: Double?, cellColor: UIColor, index: Int, isGainGoal: Bool, isGoalComplete: Bool, goal: Goal) -> SubGoal {
         let subGoal = SubGoal(context: persistentContainer.viewContext)
         subGoal.name = name
         subGoal.date = date
@@ -81,6 +82,7 @@ class DataManager {
         subGoal.cellColor = cellColor
         subGoal.index = Int16(index)
         subGoal.isGainGoal = isGainGoal
+        subGoal.isGoalComplete = isGoalComplete
         subGoal.goal = goal
         return subGoal
     }

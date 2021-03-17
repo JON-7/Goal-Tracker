@@ -18,6 +18,7 @@ class ViewSubGoalVC: UIViewController {
     var currentGoalIndex: Int!
     var subgoalColor: UIColor!
     var isGainGoal: Bool!
+    var isComplete: Bool!
     let goalVC = GoalVC(goalType: "sub")
     
     override func viewDidLoad() {
@@ -38,6 +39,7 @@ class ViewSubGoalVC: UIViewController {
         goalVC.currentGoalIndex = currentGoalIndex
         goalVC.goalColor = subgoalColor
         goalVC.isGainGoal = isGainGoal
+        goalVC.isComplete = isComplete
         view.addSubview(goalVC.view)
         goalVC.didMove(toParent: self)
         configureGoalVC()

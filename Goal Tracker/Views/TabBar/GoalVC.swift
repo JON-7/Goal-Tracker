@@ -14,16 +14,19 @@ class GoalVC: UIViewController {
     var endNum: Double?
     var currentGoalIndex: Int!
     var isGainGoal: Bool!
+    var isComplete: Bool!
     
-    var untilLabel = UILabel()
-    var dateLabel = UILabel()
-    var messageLabel = UILabel()
-    var remaining = UILabel()
-    var progressLabel = UILabel()
+    let completeButton = UIButton()
+    let untilLabel = UILabel()
+    let dateLabel = UILabel()
+    let messageLabel = UILabel()
+    let remaining = UILabel()
+    let progressLabel = UILabel()
     
     var goalColor: UIColor!
     let label = UILabel()
     var goalType: String!
+    var progressPercent: Double?
     
     required init(goalType: String) {
         self.goalType = goalType
@@ -46,7 +49,7 @@ class GoalVC: UIViewController {
         DispatchQueue.main.async { [self] in
             configLabel()
             if goalType == "sub" {
-                goalName = SubGoalsVC.subGoals[currentGoalIndex!].date
+                goalName = SubGoalsVC.subGoals[currentGoalIndex!].name
                 date = SubGoalsVC.subGoals[currentGoalIndex!].date
                 currentNum = SubGoalsVC.subGoals[currentGoalIndex!].startNum
                 endNum = SubGoalsVC.subGoals[currentGoalIndex!].endNum
@@ -74,6 +77,7 @@ class GoalVC: UIViewController {
             configureProgress()
         } else if endNum == 0.0 && date == "" {
             configureGoalTitle()
+            configCompleteButton()
         } else {
             configCountdownAndNums()
         }
@@ -109,6 +113,70 @@ class GoalVC: UIViewController {
         ])  
     }
     
+    func configCompleteButton() {
+        view.addSubview(completeButton)
+        completeButton.translatesAutoresizingMaskIntoConstraints = false
+        completeButton.layer.cornerRadius = 30
+        completeButton.clipsToBounds = true
+        completeButton.setTitle("Complete Goal", for: .normal)
+        
+        if isComplete {
+            completeButton.isSelected = true
+            completeButton.backgroundColor = .systemGreen
+            completeButton.setTitle("Sub-Goal Complete", for: .selected)
+            completeButton.titleLabel?.font = .boldSystemFont(ofSize: 20)
+        } else {
+            completeButton.backgroundColor = .lightGray
+        }
+
+        NSLayoutConstraint.activate([
+            completeButton.bottomAnchor.constraint(equalTo: view.layoutMarginsGuide.bottomAnchor, constant: -30),
+            completeButton.leadingAnchor.constraint(equalTo: view.layoutMarginsGuide.leadingAnchor, constant: 20),
+            completeButton.trailingAnchor.constraint(equalTo: view.layoutMarginsGuide.trailingAnchor, constant: -20),
+            completeButton.heightAnchor.constraint(equalToConstant: 70)
+        ])
+        
+        completeButton.addTarget(self, action: #selector(completePressed), for: .touchUpInside)
+    }
+    
+    @objc func completePressed() {
+        DispatchQueue.main.async { [self] in
+            
+            
+            
+            
+            
+            if self.isComplete {
+                completeButton.pulsate()
+                completeButton.isSelected = false
+                completeButton.backgroundColor = .lightGray
+                isComplete = false
+                if goalType == "main" {
+                    HomeVC.goals[currentGoalIndex!].isGoalComplete = false
+                    DataManager.shared.save()
+                } else if goalType == "sub" {
+                    SubGoalsVC.subGoals[currentGoalIndex!].isGoalComplete = false
+                    DataManager.shared.save()
+                }
+                
+            } else {
+                self.completeButton.pulsate()
+                self.completeButton.isSelected = true
+                self.completeButton.backgroundColor = .systemGreen
+                self.completeButton.setTitle("Sub-Goal Complete", for: .selected)
+                self.completeButton.titleLabel?.font = .boldSystemFont(ofSize: 20)
+                self.isComplete = true
+                if goalType == "main" {
+                    HomeVC.goals[currentGoalIndex!].isGoalComplete = true
+                    DataManager.shared.save()
+                } else if goalType == "sub" {
+                    SubGoalsVC.subGoals[currentGoalIndex!].isGoalComplete = true
+                    DataManager.shared.save()
+                }
+            }
+        }
+    }
+    
     // MARK: Configure the countdown view
     func configureCountdown() {
         let countdown = DaysRemainingView(dateString: date!)
@@ -123,9 +191,7 @@ class GoalVC: UIViewController {
         ])
         configureDateGoalLabel()
         configureUntilLabel()
-        
-        
-        
+        configCompleteButton()
     }
     
     func configureDateGoalLabel() {
@@ -163,6 +229,7 @@ class GoalVC: UIViewController {
         let messages = ["Great Job!", "Great Work!", "Amazing Work!"]
         navigationController?.navigationBar.topItem?.title = "Progress"
         let progress = ProgressBarView(currentNum: currentNum!, endNum: endNum!, isGainGoal: isGainGoal)
+        progressPercent = progress.getPercentage(currentNum!, endNum!, isGainGoal: isGainGoal).percentage
         self.view.addSubview(progress)
         progress.translatesAutoresizingMaskIntoConstraints = false
         progress.shape.strokeColor = goalColor.cgColor
@@ -206,6 +273,26 @@ class GoalVC: UIViewController {
             }
         }
         
+        if goalType == "main" {
+            if progressPercent == 100.0 {
+                HomeVC.goals[currentGoalIndex!].isGoalComplete = true
+                DataManager.shared.save()
+            } else if progressPercent ?? 0 >= 0 && progressPercent ?? 0 < 100.0 {
+                HomeVC.goals[currentGoalIndex!].isGoalComplete = false
+                DataManager.shared.save()
+            }
+        } else if goalType == "sub" {
+            if progressPercent == 100.0 {
+                SubGoalsVC.subGoals[currentGoalIndex!].isGoalComplete = true
+                DataManager.shared.save()
+            } else if progressPercent ?? 0 >= 0 && progressPercent ?? 0 < 100.0 {
+                SubGoalsVC.subGoals[currentGoalIndex!].isGoalComplete = false
+                DataManager.shared.save()
+            }
+        }
+        
+        
+        
         NSLayoutConstraint.activate([
             progress.topAnchor.constraint(equalTo: view.layoutMarginsGuide.topAnchor, constant: 50),
             progress.leadingAnchor.constraint(equalTo: view.leadingAnchor),
@@ -224,7 +311,7 @@ class GoalVC: UIViewController {
     // setting up both the progress view and the countdown view
     func configCountdownAndNums() {
         let progress = ProgressBarView(currentNum: currentNum!, endNum: endNum!, isGainGoal: isGainGoal)
-        
+        progressPercent = progress.getPercentage(currentNum!, endNum!, isGainGoal: isGainGoal).percentage
         if progress.percentage == "100%" {
             configureProgress()
             return
@@ -251,14 +338,24 @@ class GoalVC: UIViewController {
             countdown.heightAnchor.constraint(equalToConstant: 200)
         ])
     }
-    
-    deinit {
-        print("no retain cycle here.")
-    }
 }
 
 extension Double {
     var formatToString: String {
         return self.truncatingRemainder(dividingBy: 1) == 0 ? String(format: "%.0f", self) : String(format: "%.1f", self)
+    }
+}
+
+extension UIButton {
+    func pulsate() {
+        let pulse = CASpringAnimation(keyPath: "transform.scale")
+        pulse.duration = 0.15
+        pulse.fromValue = 0.95
+        pulse.toValue = 1
+        pulse.autoreverses = false
+        pulse.repeatCount = 0
+        pulse.initialVelocity = 0.9
+        pulse.damping = 1.0
+        layer.add(pulse, forKey: nil)
     }
 }

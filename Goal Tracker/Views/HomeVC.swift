@@ -32,6 +32,7 @@ class HomeVC: UIViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         NotificationCenter.default.addObserver(self, selector: #selector(reloadData), name: NSNotification.Name("newDataNotif"), object: nil)
+        collectionView.reloadData()
         navigationController?.navigationBar.prefersLargeTitles = true
         self.title = "GOALS"
     }
@@ -39,7 +40,6 @@ class HomeVC: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         NotificationCenter.default.addObserver(self, selector: #selector(closeView), name: Notification.Name("dismissNotif"), object: nil)
-        collectionView.reloadData()
         // retrieving all goal objects
         HomeVC.goals = DataManager.shared.fetchGoals()
         navigationController?.navigationBar.prefersLargeTitles = true
@@ -53,7 +53,6 @@ class HomeVC: UIViewController {
         collectionView.addGestureRecognizer(gesture)
         collectionView.showsVerticalScrollIndicator = false
     }
-    
     
     // configuring drag and drop
     @objc func handleLongPressGesture(_ gesture: UILongPressGestureRecognizer) {
@@ -94,20 +93,29 @@ extension HomeVC: UICollectionViewDataSource, UICollectionViewDelegate {
         cell.textLabel.textColor = .white
         cell.textLabel.font = .systemFont(ofSize: 30, weight: .semibold)        
         cell.layer.cornerRadius = 20
-
+        
         // creates the goal cells
         if indexPath.item < HomeVC.goals.count {
             cell.layer.cornerRadius = 20
             cell.textLabel.backgroundColor = HomeVC.goals[indexPath.row].cellColor
-            cell.textLabel.text = "\(HomeVC.goals[indexPath.row].name ?? "Name not found")"
             cell.textLabel.numberOfLines = 2
+            
+            let attributeString: NSMutableAttributedString = NSMutableAttributedString(string: HomeVC.goals[indexPath.row].name ?? "Name not found")
+            attributeString.addAttribute(NSAttributedString.Key.strikethroughStyle, value: 2, range: NSMakeRange(0, attributeString.length))
+            if HomeVC.goals[indexPath.row].isGoalComplete {
+                cell.textLabel.attributedText = attributeString
+            } else {
+                attributeString.removeAttribute(NSAttributedString.Key.strikethroughStyle, range: NSMakeRange(0, attributeString.length))
+                cell.textLabel.attributedText = attributeString
+            }
         }
         
         // creates the create goal button
         if indexPath.item == HomeVC.goals.count {
+            let attributeString: NSMutableAttributedString = NSMutableAttributedString(string: "Create Goal")
+            cell.textLabel.attributedText = attributeString
             cell.layer.cornerRadius = 45
             cell.textLabel.backgroundColor = UIColor(named: "goalActionBtnColor")
-            cell.textLabel.text = "Create Goal"
             cell.textLabel.textColor = .black
         }
         return cell
@@ -156,6 +164,7 @@ extension HomeVC: UICollectionViewDataSource, UICollectionViewDelegate {
             goalViewController.currentGoalIndex = indexPath.item
             goalViewController.goalType = "main"
             goalViewController.isGainGoal = goal.isGainGoal
+            goalViewController.isComplete = goal.isGoalComplete
             
             let goalVC = UINavigationController(rootViewController: goalViewController)
             let subGoalsVC = UINavigationController(rootViewController: subGoalViewController)
@@ -242,7 +251,7 @@ extension HomeVC: UICollectionViewDataSource, UICollectionViewDelegate {
             buttonTitle: "Edit Goal",
             isGainGoal: HomeVC.goals[currentIndex].isGainGoal)
         
-
+        
         
         let nav = UINavigationController(rootViewController: vc)
         nav.modalPresentationStyle = .fullScreen

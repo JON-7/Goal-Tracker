@@ -37,13 +37,11 @@ class ProgressBarView: UIView {
         configureProgress()
         
         timer = Timer.scheduledTimer(timeInterval: 3.0, target: self, selector: #selector(showDetails), userInfo: nil, repeats: true)
-        
     }
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
     
     func configureProgress() {
         
@@ -99,7 +97,6 @@ class ProgressBarView: UIView {
     }
     
     func getPercentage(_ current: Double, _ goal: Double, isGainGoal: Bool) -> (percentage: Double, barProgress: Double) {
-        
         var percentage: Double = 0.0
         if isGainGoal {
             if current >= goal {
@@ -114,15 +111,7 @@ class ProgressBarView: UIView {
                 percentage = (goal / current) * 100
             }
         }
-
         let progress: Double = (percentage * 0.008)
-        print("Percentage: \(percentage)")
-        print("Progress: \(progress)")
-        
-        if percentage > 70 {
-            print("GREATER THAN 70")
-        }
-        
         return (percentage, progress)
     }
     

@@ -118,14 +118,22 @@ extension SubGoalsVC: UICollectionViewDataSource, UICollectionViewDelegate {
             cell.layer.cornerRadius = 20
             cell.textLabel.backgroundColor = SubGoalsVC.subGoals[indexPath.row].cellColor
             cell.textLabel.textColor = .white
-            cell.textLabel.text = "\(SubGoalsVC.subGoals[indexPath.row].name ?? "Name not found")"
             cell.textLabel.numberOfLines = 2
+            if SubGoalsVC.subGoals[indexPath.row].isGoalComplete {
+                let attributeString: NSMutableAttributedString = NSMutableAttributedString(string: SubGoalsVC.subGoals[indexPath.row].name ?? "Name not found")
+                    attributeString.addAttribute(NSAttributedString.Key.strikethroughStyle, value: 2, range: NSMakeRange(0, attributeString.length))
+                cell.textLabel.attributedText = attributeString
+            } else {
+                let attributeString: NSMutableAttributedString = NSMutableAttributedString(string: SubGoalsVC.subGoals[indexPath.row].name ?? "Name not found")
+                cell.textLabel.attributedText = attributeString
+            }
         }
         
         if indexPath.item == SubGoalsVC.subGoals.count {
+            let attributeString: NSMutableAttributedString = NSMutableAttributedString(string: "Create Sub-Goal")
+            cell.textLabel.attributedText = attributeString
             cell.layer.cornerRadius = 45
             cell.textLabel.backgroundColor = .white
-            cell.textLabel.text = "Create Sub-Goal"
             cell.textLabel.textColor = .black
         }
         return cell
@@ -158,6 +166,7 @@ extension SubGoalsVC: UICollectionViewDataSource, UICollectionViewDelegate {
             vc.currentGoalIndex = indexPath.item
             vc.subgoalColor = SubGoalsVC.subGoals[indexPath.row].cellColor
             vc.isGainGoal = SubGoalsVC.subGoals[indexPath.row].isGainGoal
+            vc.isComplete = SubGoalsVC.subGoals[indexPath.row].isGoalComplete
             
             let navVC = UINavigationController(rootViewController: vc)
             vc.navigationItem.leftBarButtonItem = .init(

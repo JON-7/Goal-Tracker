@@ -18,14 +18,17 @@ class GoalButton: UIButton {
         fatalError("init(coder:) has not been implemented")
     }
     
-    
     private func configure() {
         translatesAutoresizingMaskIntoConstraints = false
         backgroundColor = UIColor(named: "goalActionBtnColor")
         setTitleColor(.black, for: .normal)
         titleLabel?.font = .systemFont(ofSize: 30, weight: .semibold)
         clipsToBounds = true
-        layer.cornerRadius = 38
+    }
+    
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        layer.cornerRadius = bounds.height / 2
     }
     
 }

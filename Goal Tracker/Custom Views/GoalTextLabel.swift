@@ -23,6 +23,7 @@ class GoalTextLabel: UITextView {
     }
     
     var label = UILabel()
+    var titles = UILabel()
     
     func configure() {
         translatesAutoresizingMaskIntoConstraints = false
@@ -34,6 +35,5 @@ class GoalTextLabel: UITextView {
         layer.cornerRadius = 10
         layer.maskedCorners = [.layerMinXMinYCorner, .layerMinXMaxYCorner]
         backgroundColor = UIColor(named: "createGoalLabelColor")
-        
     }
 }

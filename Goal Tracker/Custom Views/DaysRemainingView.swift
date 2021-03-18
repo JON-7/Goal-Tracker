@@ -23,12 +23,15 @@ class DaysRemainingView: UIView {
     var secondsView = UILabel()
     var secondsTextLabel = UILabel()
     
-    var topPadding = CGFloat(100)
+    //var topPadding = CGFloat(100)
+    var topPadding = CGFloat(UIScreen.main.bounds.height / 3)
     var constWidth = CGFloat(70)
+    
+    var timeDiff: Double!
     
     var timer: Timer!
     lazy var containerView: UIView = {
-        let view = UIView(frame: CGRect(x: 0, y: 0, width: UIScreen.main.bounds.width, height: 300))
+        let view = UIView(frame: CGRect(x: 0, y: 0, width: UIScreen.main.bounds.width, height: 100))
         //let view = UIView()
         view.translatesAutoresizingMaskIntoConstraints = false
         return view
@@ -61,7 +64,7 @@ class DaysRemainingView: UIView {
         // keeping the same date format used when creating the goal but, adding a starting time of 12:00 am
         formatter.dateFormat = "MMM d, yyyy, 00:00:00"
         goalDate = formatter.date(from: self.dateString)
-        var timeDiff = floor((goalDate?.timeIntervalSince(Date()))!)
+        timeDiff = floor((goalDate?.timeIntervalSince(Date()))!)
         DispatchQueue.main.async { [self] in
             self.daysView.text = "\(Int(timeDiff) / 86400)"
             self.hoursView.text = "\((Int(timeDiff) % 86400) / 3600)"
@@ -168,6 +171,8 @@ class DaysRemainingView: UIView {
         ])
     }
     
-    
+    func stopTimer() {
+        timer.invalidate()
+    }
 
 }

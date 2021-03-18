@@ -12,6 +12,8 @@ class HomeVC: UIViewController {
     
     static var goals = [Goal]()
     var currentIndex = 0
+    var nameOnly: Bool?
+    var completeGoalSelected: Bool?
     
     override func loadView() {
         super.loadView()
@@ -177,7 +179,7 @@ extension HomeVC: UICollectionViewDataSource, UICollectionViewDelegate {
             // if goal contains only a name then the tabbar will only have a subgoal and notes view
             if goal.startNum == 0.0 && goal.endNum == 0.0 && goal.date == "" {
                 tabbar.setViewControllers([subGoalsVC, notesVC], animated: true)
-                
+                nameOnly = true
                 subGoalViewController.navigationItem.leftBarButtonItem = .init(
                     barButtonSystemItem: .close,
                     target: self,
@@ -250,18 +252,18 @@ extension HomeVC: UICollectionViewDataSource, UICollectionViewDelegate {
             finalNumTFText: endNumber,
             buttonTitle: "Edit Goal",
             isGainGoal: HomeVC.goals[currentIndex].isGainGoal)
-        
-        
-        
+        vc.isGoalComplete = HomeVC.goals[currentIndex].isGoalComplete
         let nav = UINavigationController(rootViewController: vc)
         nav.modalPresentationStyle = .fullScreen
         vc.navigationController?.navigationBar.prefersLargeTitles = true
-        vc.navigationController?.navigationBar.topItem?.title = " Edit Goal"
+        vc.navigationController?.navigationBar.topItem?.title = " Edit Main Goal"
+        
         vc.navigationItem.rightBarButtonItem = .init(
             barButtonSystemItem: .close,
             target: self,
             action: #selector(closeView))
         vc.currentGoalIndex = currentIndex
+        vc.onlyGoal = true
         
         DispatchQueue.main.async {
             self.getTopMostViewController()?.present(nav, animated: true, completion: nil)
@@ -269,6 +271,7 @@ extension HomeVC: UICollectionViewDataSource, UICollectionViewDelegate {
     }
     
     @objc func closeView() {
+        collectionView.reloadData()
         self.presentingViewController?.presentingViewController?.dismiss(animated: true, completion: nil)
     }
     

@@ -17,6 +17,8 @@ class CreateGoalVC: UIViewController {
     let finalNumTFText: String?
     let buttonTitle: String
     var isGainGoal: Bool
+    var isGoalComplete: Bool!
+    var onlyGoal: Bool?
     
     var currentGoalIndex: Int?
     var currentSubIndex: Int?
@@ -68,7 +70,7 @@ class CreateGoalVC: UIViewController {
     let deleteButton = GoalButton()
     let trailingPadding = CGFloat(5)
     let topPadding = CGFloat(19)
-    let heightMultiplier = CGFloat(0.06)
+    let heightMultiplier = CGFloat(0.066)
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -82,6 +84,9 @@ class CreateGoalVC: UIViewController {
     }
     
     func configureView() {
+        if goalType == "main" && dateTFText == "" && currentNumTFText == "" && finalNumTFText == "" {
+            configLeftBarItem()
+        }
         configureCloseButton()
         configureColor()
         if action == "create" { configureMainLabel() }
@@ -109,7 +114,6 @@ class CreateGoalVC: UIViewController {
         }
     }
     
-    
     func configureCloseButton() {
         if action == "edit" {
             navigationItem.rightBarButtonItem = .init(barButtonSystemItem: .close, target: self, action: #selector(closeView))
@@ -120,9 +124,61 @@ class CreateGoalVC: UIViewController {
         dismiss(animated: true)
     }
     
+    func configLeftBarItem() {
+        if onlyGoal ?? false && goalType == "main" {
+            let goalComplete = HomeVC.goals[currentGoalIndex!].isGoalComplete
+            var leftTitle = ""
+            if goalComplete {
+                leftTitle = "Goal Complete"
+            } else {
+                leftTitle = "Mark Goal As Complete"
+            }
+            navigationItem.leftBarButtonItem = .init(title: leftTitle, style: .plain, target: self, action: #selector(updateNav))
+        }
+    }
+    
+    @objc func updateNav() {
+        let goalComplete = HomeVC.goals[currentGoalIndex!].isGoalComplete
+        if goalComplete {
+            let ac = UIAlertController(title: "Mark As Incomplete?", message: "Do you want to change the status of the goal to INCOMPLETE?", preferredStyle: .alert)
+            let inComplete = UIAlertAction(title: "Change To Incomplete", style: .default) { _ in
+                HomeVC.goals[self.currentGoalIndex!].isGoalComplete = false
+                DataManager.shared.save()
+                DispatchQueue.main.async { [self] in
+                    navigationItem.leftBarButtonItem?.title = "Mark Goal As Complete"
+                    dismiss(animated: true, completion: nil)
+                }
+            }
+            let cancel = UIAlertAction(title: "Cancel", style: .cancel)
+            ac.addAction(inComplete)
+            ac.addAction(cancel)
+            present(ac, animated: true)
+            
+        } else if !goalComplete {
+            let ac = UIAlertController(title: "Mark As Complete?", message: "Do you want to mark this goal as COMPLETE?", preferredStyle: .alert)
+            let complete = UIAlertAction(title: "Mark As Complete", style: .default) { _ in
+                HomeVC.goals[self.currentGoalIndex!].isGoalComplete = true
+                DataManager.shared.save()
+                DispatchQueue.main.async { [self] in
+                    navigationItem.leftBarButtonItem?.title = "Goal Complete"
+                    dismiss(animated: true, completion: nil)
+                }
+            }
+            let cancel = UIAlertAction(title: "Cancel", style: .cancel)
+            ac.addAction(complete)
+            ac.addAction(cancel)
+            present(ac, animated: true)
+        }
+    }
+    
     public func configureMainLabel() {
         createGoalLabel.translatesAutoresizingMaskIntoConstraints = false
-        createGoalLabel.text = "Create Goal"
+        if goalType == "main" {
+            createGoalLabel.text = "Create Goal"
+        } else if goalType == "sub" {
+            createGoalLabel.text = "Create Sub-Goal"
+        }
+        
         createGoalLabel.textAlignment = .center
         createGoalLabel.font = .preferredFont(forTextStyle: .largeTitle)
         view.addSubview(createGoalLabel)
@@ -553,8 +609,6 @@ extension CreateGoalVC: UIColorPickerViewControllerDelegate {
             }
         }
     }
-    
-    
 }
 
 extension UIViewController: UITextFieldDelegate, UINavigationControllerDelegate {

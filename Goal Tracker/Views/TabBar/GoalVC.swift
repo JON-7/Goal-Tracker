@@ -17,8 +17,8 @@ class GoalVC: UIViewController {
     var isComplete: Bool!
     
     let completeButton = UIButton()
-    let untilLabel = UILabel()
-    let dateLabel = UILabel()
+    let topCountdownLabel = UILabel()
+    let bottomCountdownLabel = UILabel()
     let messageLabel = UILabel()
     let remaining = UILabel()
     let progressLabel = UILabel()
@@ -44,7 +44,7 @@ class GoalVC: UIViewController {
         navigationController?.navigationBar.prefersLargeTitles = true
         configureView()
     }
-        
+    
     @objc func updateUI() {
         DispatchQueue.main.async { [self] in
             configLabel()
@@ -67,6 +67,7 @@ class GoalVC: UIViewController {
             }
         }
     }
+    
     func configureView() {
         if goalColor == nil {
             goalColor = HomeVC.goals[currentGoalIndex].cellColor
@@ -95,7 +96,7 @@ class GoalVC: UIViewController {
             label.bottomAnchor.constraint(equalTo: view.bottomAnchor)
         ])
     }
-
+    
     func configureGoalTitle() {
         view.addSubview(messageLabel)
         messageLabel.translatesAutoresizingMaskIntoConstraints = false
@@ -123,12 +124,16 @@ class GoalVC: UIViewController {
         if isComplete {
             completeButton.isSelected = true
             completeButton.backgroundColor = .systemGreen
-            completeButton.setTitle("Sub-Goal Complete", for: .selected)
+            if goalType == "main" {
+                completeButton.setTitle("Goal Complete", for: .selected)
+            } else if goalType == "sub" {
+                completeButton.setTitle("Sub-Goal Complete", for: .selected)
+            }
             completeButton.titleLabel?.font = .boldSystemFont(ofSize: 20)
         } else {
             completeButton.backgroundColor = .lightGray
         }
-
+        
         NSLayoutConstraint.activate([
             completeButton.bottomAnchor.constraint(equalTo: view.layoutMarginsGuide.bottomAnchor, constant: -30),
             completeButton.leadingAnchor.constraint(equalTo: view.layoutMarginsGuide.leadingAnchor, constant: 20),
@@ -141,11 +146,6 @@ class GoalVC: UIViewController {
     
     @objc func completePressed() {
         DispatchQueue.main.async { [self] in
-            
-            
-            
-            
-            
             if self.isComplete {
                 completeButton.pulsate()
                 completeButton.isSelected = false
@@ -157,6 +157,10 @@ class GoalVC: UIViewController {
                 } else if goalType == "sub" {
                     SubGoalsVC.subGoals[currentGoalIndex!].isGoalComplete = false
                     DataManager.shared.save()
+                }
+                if date != "" && endNum == 0.0 {
+                    configLabel()
+                    configureCountdown()
                 }
                 
             } else {
@@ -173,6 +177,10 @@ class GoalVC: UIViewController {
                     SubGoalsVC.subGoals[currentGoalIndex!].isGoalComplete = true
                     DataManager.shared.save()
                 }
+                if date != "" && endNum == 0.0 {
+                    configLabel()
+                    configureCountdown()
+                }
             }
         }
     }
@@ -182,47 +190,52 @@ class GoalVC: UIViewController {
         let countdown = DaysRemainingView(dateString: date!)
         countdown.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(countdown)
-        navigationController?.navigationBar.topItem?.title = date
-
+        
+        if isComplete {
+            countdown.stopTimer()
+            countdown.timeDiff = 0
+            countdown.daysView.text = "0"
+        }
+        
+        view.addSubview(topCountdownLabel)
+        topCountdownLabel.translatesAutoresizingMaskIntoConstraints = false
+        topCountdownLabel.text = "GOAL: \n\(goalName!)"
+        topCountdownLabel.numberOfLines = 6
+        topCountdownLabel.font = .monospacedSystemFont(ofSize: 25, weight: .thin)
+        topCountdownLabel.clipsToBounds = true
+        topCountdownLabel.layer.cornerRadius = 10
+        topCountdownLabel.backgroundColor = UIColor(named: "countdownColor")
+        
+        view.addSubview(bottomCountdownLabel)
+        bottomCountdownLabel.translatesAutoresizingMaskIntoConstraints = false
+        bottomCountdownLabel.textAlignment = .center
+        bottomCountdownLabel.font = .boldSystemFont(ofSize: 35)
+        
+        if isComplete {
+            navigationController?.navigationBar.topItem?.title = "Goal Complete"
+            bottomCountdownLabel.text = "Complete"
+            bottomCountdownLabel.textColor = UIColor(named: "textColor")
+        } else {
+            navigationController?.navigationBar.topItem?.title = date
+            bottomCountdownLabel.text = "Time Remaining"
+            if countdown.timeDiff < -1 {
+                bottomCountdownLabel.textColor = .systemRed
+            }
+        }
+        
         NSLayoutConstraint.activate([
-            countdown.topAnchor.constraint(equalTo: view.topAnchor,constant: 100),
-            countdown.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            countdown.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            topCountdownLabel.topAnchor.constraint(equalTo: view.layoutMarginsGuide.topAnchor),
+            topCountdownLabel.leadingAnchor.constraint(equalTo: view.layoutMarginsGuide.leadingAnchor),
+            topCountdownLabel.trailingAnchor.constraint(equalTo: view.layoutMarginsGuide.trailingAnchor),
+            
+            bottomCountdownLabel.topAnchor.constraint(equalTo: view.topAnchor, constant: (view.bounds.height/2) - 60),
+            bottomCountdownLabel.leadingAnchor.constraint(equalTo: view.layoutMarginsGuide.leadingAnchor),
+            bottomCountdownLabel.trailingAnchor.constraint(equalTo: view.layoutMarginsGuide.trailingAnchor)
         ])
-        configureDateGoalLabel()
-        configureUntilLabel()
         configCompleteButton()
     }
     
-    func configureDateGoalLabel() {
-        view.addSubview(dateLabel)
-        dateLabel.translatesAutoresizingMaskIntoConstraints = false
-        dateLabel.text = goalName
-        dateLabel.textAlignment = .center
-        dateLabel.font = .preferredFont(forTextStyle: .headline)
-        dateLabel.font = .systemFont(ofSize: 35)
-        dateLabel.numberOfLines = 3
-        
-        NSLayoutConstraint.activate([
-            dateLabel.centerYAnchor.constraint(equalTo: view.centerYAnchor, constant: 75),
-            dateLabel.leadingAnchor.constraint(equalTo: view.layoutMarginsGuide.leadingAnchor),
-            dateLabel.trailingAnchor.constraint(equalTo: view.layoutMarginsGuide.trailingAnchor)
-        ])
-    }
     
-    func configureUntilLabel() {
-        view.addSubview(untilLabel)
-        untilLabel.translatesAutoresizingMaskIntoConstraints = false
-        untilLabel.text = "Left To"
-        untilLabel.font = .boldSystemFont(ofSize: 40)
-        untilLabel.textAlignment = .center
-        
-        NSLayoutConstraint.activate([
-            untilLabel.centerYAnchor.constraint(equalTo: view.centerYAnchor),
-            untilLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            untilLabel.trailingAnchor.constraint(equalTo: view.trailingAnchor)
-        ])
-    }
     
     //MARK: Configure the progress bar, message label, and remaining label
     public func configureProgress() {
@@ -246,12 +259,12 @@ class GoalVC: UIViewController {
         }
         
         remaining.translatesAutoresizingMaskIntoConstraints = false
-        remaining.font = .systemFont(ofSize: 50, weight: .semibold)
+        remaining.font = .systemFont(ofSize: 45, weight: .semibold)
         remaining.textAlignment = .center
         
         view.addSubview(messageLabel)
         messageLabel.translatesAutoresizingMaskIntoConstraints = false
-        messageLabel.font = .systemFont(ofSize: 50, weight: .semibold)
+        messageLabel.font = .systemFont(ofSize: 45, weight: .semibold)
         messageLabel.textAlignment = .center
         messageLabel.numberOfLines = 2
         
@@ -291,8 +304,6 @@ class GoalVC: UIViewController {
             }
         }
         
-        
-        
         NSLayoutConstraint.activate([
             progress.topAnchor.constraint(equalTo: view.layoutMarginsGuide.topAnchor, constant: 50),
             progress.leadingAnchor.constraint(equalTo: view.leadingAnchor),
@@ -302,7 +313,7 @@ class GoalVC: UIViewController {
             messageLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             messageLabel.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             
-            remaining.topAnchor.constraint(equalTo: messageLabel.bottomAnchor, constant: 5),
+            remaining.topAnchor.constraint(equalTo: messageLabel.bottomAnchor, constant: 3),
             remaining.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             remaining.trailingAnchor.constraint(equalTo: view.trailingAnchor),
         ])
@@ -332,7 +343,7 @@ class GoalVC: UIViewController {
             progress.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             progress.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             
-            countdown.topAnchor.constraint(equalTo: progress.bottomAnchor, constant: 250),
+            countdown.topAnchor.constraint(equalTo: progress.bottomAnchor, constant: 100),
             countdown.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             countdown.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             countdown.heightAnchor.constraint(equalToConstant: 200)

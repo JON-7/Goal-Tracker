@@ -24,7 +24,6 @@ class NotesVC: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
         tableView.reloadData()
         configureTableView()
         configureNav()
@@ -66,11 +65,8 @@ class NotesVC: UIViewController {
         let vc = CreateNoteVC(action: "", noteTitle: "", noteText: "")
         vc.view.backgroundColor = UIColor(named: "mainBackgroundColor")
         vc.goalIndex = goalIndex
-        
-        
-        let navVC = UINavigationController(rootViewController: vc)
-        navVC.modalPresentationStyle = .fullScreen
-        present(navVC, animated: true)
+        vc.modalPresentationStyle = .fullScreen
+        navigationController?.pushViewController(vc, animated: true)
     }
     
 }
@@ -93,27 +89,19 @@ extension NotesVC: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let vc = ViewNoteVC()
         vc.currentIndex = indexPath.row
-        vc.navigationItem.leftBarButtonItem = .init(
-            image: UIImage(systemName: "arrow.backward"),
-            style: .plain,
-            target: self,
-            action: #selector(goBack))
-        
         vc.navigationItem.rightBarButtonItem = .init(
             image: UIImage(systemName: "pencil"),
             style: .plain,
             target: self,
             action: #selector(editNote))
         
-        let navVC = UINavigationController(rootViewController: vc)
+        //let navVC = UINavigationController(rootViewController: vc)
         vc.view.backgroundColor = UIColor(named: "mainBackgroundColor")
-        navVC.modalPresentationStyle = .fullScreen
+        //navVC.modalPresentationStyle = .fullScreen
         self.noteIndex = indexPath.row
-        present(navVC, animated: true)
-    }
-    
-    @objc func goBack() {
-        dismiss(animated: true)
+        //present(navVC, animated: true)
+        vc.modalPresentationStyle = .fullScreen
+        navigationController?.pushViewController(vc, animated: true)
     }
     
     @objc func editNote() {
@@ -121,11 +109,13 @@ extension NotesVC: UITableViewDelegate, UITableViewDataSource {
         vc.goalIndex = goalIndex
         vc.noteIndex = noteIndex
         vc.view.backgroundColor = UIColor(named: "mainBackgroundColor")
-        let navVC = UINavigationController(rootViewController: vc)
-        navVC.modalPresentationStyle = .fullScreen
-        DispatchQueue.main.async {
-            self.getTopMostViewController()?.present(navVC, animated: true, completion: nil)
-        }
+//        let navVC = UINavigationController(rootViewController: vc)
+//        navVC.modalPresentationStyle = .fullScreen
+//        DispatchQueue.main.async {
+//            self.getTopMostViewController()?.present(navVC, animated: true, completion: nil)
+//        }
+        vc.modalPresentationStyle = .fullScreen
+        navigationController?.pushViewController(vc, animated: true)
     }
     
     func getTopMostViewController() -> UIViewController? {

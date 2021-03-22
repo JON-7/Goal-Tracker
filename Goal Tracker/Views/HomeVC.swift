@@ -35,6 +35,7 @@ class HomeVC: UIViewController {
     override func viewWillAppear(_ animated: Bool) {
         NotificationCenter.default.addObserver(self, selector: #selector(reloadData), name: NSNotification.Name("newDataNotif"), object: nil)
         collectionView.reloadData()
+        tabBarController?.hidesBottomBarWhenPushed = true
         navigationController?.navigationBar.prefersLargeTitles = true
         self.title = "GOALS"
     }
@@ -44,8 +45,8 @@ class HomeVC: UIViewController {
         NotificationCenter.default.addObserver(self, selector: #selector(closeView), name: Notification.Name("dismissNotif"), object: nil)
         // retrieving all goal objects
         HomeVC.goals = DataManager.shared.fetchGoals()
-        navigationController?.navigationBar.prefersLargeTitles = true
-        self.title = "GOALS"
+        //        navigationController?.navigationBar.prefersLargeTitles = true
+        //        self.title = "GOALS"
         collectionView.backgroundColor = UIColor(named: "mainBackgroundColor")
         collectionView.dataSource = self
         collectionView.delegate = self
@@ -215,7 +216,6 @@ extension HomeVC: UICollectionViewDataSource, UICollectionViewDelegate {
                     style: .plain,
                     target: self,
                     action: #selector(editGoal))
-                
                 guard let items = tabbar.tabBar.items else { return }
                 let images = ["scroll.fill","applescript", "note.text"]
                 
@@ -257,11 +257,11 @@ extension HomeVC: UICollectionViewDataSource, UICollectionViewDelegate {
         nav.modalPresentationStyle = .fullScreen
         vc.navigationController?.navigationBar.prefersLargeTitles = true
         vc.navigationController?.navigationBar.topItem?.title = " Edit Main Goal"
-        
-        vc.navigationItem.rightBarButtonItem = .init(
-            barButtonSystemItem: .close,
-            target: self,
-            action: #selector(closeView))
+        vc.navigationController?.isToolbarHidden = true
+//        vc.navigationItem.rightBarButtonItem = .init(
+//            barButtonSystemItem: .close,
+//            target: self,
+//            action: #selector(closeView))
         vc.currentGoalIndex = currentIndex
         vc.onlyGoal = true
         
@@ -272,7 +272,8 @@ extension HomeVC: UICollectionViewDataSource, UICollectionViewDelegate {
     
     @objc func closeView() {
         collectionView.reloadData()
-        self.presentingViewController?.presentingViewController?.dismiss(animated: true, completion: nil)
+
+        dismiss(animated: true)
     }
     
     func getTopMostViewController() -> UIViewController? {

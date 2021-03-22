@@ -16,25 +16,39 @@ class ViewNoteVC: UIViewController {
     var dateLabel = UILabel()
     var noteLabel = UILabel()
     var currentIndex: Int!
+    var noteText: UITextView = {
+        let textView = UITextView()
+        textView.isEditable = false
+        textView.isScrollEnabled = true
+        return textView
+    }()
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        NotificationCenter.default.addObserver(self, selector: #selector(updateNote), name: NSNotification.Name("updateNote"), object: nil)
+        self.navigationController?.interactivePopGestureRecognizer?.delegate = nil
+        self.navigationController?.interactivePopGestureRecognizer?.isEnabled = true
         configureTitleLabel()
         configureDateLabel()
         configureNoteTF()
+    }
+    
+    @objc func updateNote() {
+        DispatchQueue.main.async {
+            self.noteText.text = NotesVC.notes[self.currentIndex!].noteText
+        }
     }
     
     func configureTitleLabel() {
         view.addSubview(titleLabel)
         titleLabel.translatesAutoresizingMaskIntoConstraints = false
         titleLabel.numberOfLines = 2
-        
         titleLabel.text = NotesVC.notes[currentIndex].title
         titleLabel.textAlignment = .center
         titleLabel.font = .systemFont(ofSize: 25, weight: .semibold)
         
         NSLayoutConstraint.activate([
-            titleLabel.topAnchor.constraint(equalTo: view.layoutMarginsGuide.topAnchor, constant: 20),
+            titleLabel.topAnchor.constraint(equalTo: view.layoutMarginsGuide.topAnchor, constant: -40),
             titleLabel.leadingAnchor.constraint(equalTo: view.layoutMarginsGuide.leadingAnchor, constant: 20),
             titleLabel.trailingAnchor.constraint(equalTo: view.layoutMarginsGuide.trailingAnchor, constant: -20),
             titleLabel.heightAnchor.constraint(equalToConstant: 30)
@@ -56,19 +70,22 @@ class ViewNoteVC: UIViewController {
     }
     
     func configureNoteTF() {
-        view.addSubview(noteLabel)
-        noteLabel.translatesAutoresizingMaskIntoConstraints = false
-        noteLabel.numberOfLines = 0
-        noteLabel.text = NotesVC.notes[currentIndex].noteText
-        noteLabel.textAlignment = .left
-        noteLabel.layer.masksToBounds = true
-        noteLabel.font = .preferredFont(forTextStyle: .headline)
-        noteLabel.font = .systemFont(ofSize: 20)
-    
+        noteText.translatesAutoresizingMaskIntoConstraints = false
+        noteText.text = NotesVC.notes[currentIndex].noteText
+        noteText.isEditable = false
+        noteText.isScrollEnabled = true
+        noteText.textAlignment = .left
+        noteText.layer.masksToBounds = true
+        noteText.font = .preferredFont(forTextStyle: .headline)
+        noteText.font = .systemFont(ofSize: 20)
+        noteText.backgroundColor = UIColor(named: "mainBackgroundColor")
+        view.addSubview(noteText)
+        
         NSLayoutConstraint.activate([
-            noteLabel.topAnchor.constraint(equalTo: dateLabel.bottomAnchor, constant: 20),
-            noteLabel.leadingAnchor.constraint(equalTo: view.layoutMarginsGuide.leadingAnchor, constant: 10),
-            noteLabel.trailingAnchor.constraint(equalTo: view.layoutMarginsGuide.trailingAnchor, constant: -10),
+            noteText.topAnchor.constraint(equalTo: dateLabel.bottomAnchor, constant: 20),
+            noteText.leadingAnchor.constraint(equalTo: view.layoutMarginsGuide.leadingAnchor),
+            noteText.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            noteText.bottomAnchor.constraint(equalTo: view.layoutMarginsGuide.bottomAnchor)
         ])
     }
 }

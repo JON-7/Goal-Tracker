@@ -27,6 +27,7 @@ class GoalVC: UIViewController {
     let label = UILabel()
     var goalType: String!
     var progressPercent: Double?
+    var countdown = DaysRemainingView(dateString: "")
     
     required init(goalType: String) {
         self.goalType = goalType
@@ -39,9 +40,13 @@ class GoalVC: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        self.view = view
         NotificationCenter.default.addObserver(self, selector: #selector(updateUI), name: Notification.Name("updateGoalUI"), object: nil)
+        self.navigationController?.interactivePopGestureRecognizer?.delegate = nil
+        self.navigationController?.interactivePopGestureRecognizer?.isEnabled = true
         view.backgroundColor = UIColor(named: "mainBackgroundColor")
         navigationController?.navigationBar.prefersLargeTitles = true
+        countdown = DaysRemainingView(dateString: date!)
         configureView()
     }
     
@@ -105,7 +110,11 @@ class GoalVC: UIViewController {
         messageLabel.numberOfLines = 3
         messageLabel.font = .preferredFont(forTextStyle: .headline)
         messageLabel.font = .systemFont(ofSize: 40)
-        navigationController?.navigationBar.topItem?.title = "Goal"
+        if goalType ==  "main" {
+            navigationController?.navigationBar.topItem?.title = "Goal"
+        } else {
+            self.parent?.title = "Goal"
+        }
         
         NSLayoutConstraint.activate([
             messageLabel.topAnchor.constraint(equalTo: view.layoutMarginsGuide.topAnchor, constant: 20),
@@ -187,14 +196,15 @@ class GoalVC: UIViewController {
     
     // MARK: Configure the countdown view
     func configureCountdown() {
-        let countdown = DaysRemainingView(dateString: date!)
-        countdown.translatesAutoresizingMaskIntoConstraints = false
-        view.addSubview(countdown)
+        let countdownSingle = DaysRemainingView(dateString: date!)
+        addChild(countdownSingle)
+        view.addSubview(countdownSingle.view)
+        countdownSingle.didMove(toParent: self)
+        countdownSingle.view.translatesAutoresizingMaskIntoConstraints = false
         
         if isComplete {
-            countdown.stopTimer()
-            countdown.timeDiff = 0
-            countdown.daysView.text = "0"
+            countdownSingle.stopTimer()
+            countdownSingle.timeDiff = 0
         }
         
         view.addSubview(topCountdownLabel)
@@ -210,15 +220,23 @@ class GoalVC: UIViewController {
         bottomCountdownLabel.translatesAutoresizingMaskIntoConstraints = false
         bottomCountdownLabel.textAlignment = .center
         bottomCountdownLabel.font = .boldSystemFont(ofSize: 35)
+        bottomCountdownLabel.text = "Time Remaining"
         
         if isComplete {
-            navigationController?.navigationBar.topItem?.title = "Goal Complete"
-            bottomCountdownLabel.text = "Complete"
+            if goalType == "main" {
+                navigationController?.navigationBar.topItem?.title = "Goal Complete"
+            } else {
+                self.parent?.title = "Goal Complete"
+            }
             bottomCountdownLabel.textColor = UIColor(named: "textColor")
         } else {
-            navigationController?.navigationBar.topItem?.title = date
-            bottomCountdownLabel.text = "Time Remaining"
-            if countdown.timeDiff < -1 {
+            if goalType == "main" {
+                navigationController?.navigationBar.topItem?.title = date
+            } else {
+                self.parent?.title = date
+            }
+            
+            if countdownSingle.timeDiff < -1 {
                 bottomCountdownLabel.textColor = .systemRed
             }
         }
@@ -228,25 +246,69 @@ class GoalVC: UIViewController {
             topCountdownLabel.leadingAnchor.constraint(equalTo: view.layoutMarginsGuide.leadingAnchor),
             topCountdownLabel.trailingAnchor.constraint(equalTo: view.layoutMarginsGuide.trailingAnchor),
             
-            bottomCountdownLabel.topAnchor.constraint(equalTo: view.topAnchor, constant: (view.bounds.height/2) - 60),
+            //bottomCountdownLabel.topAnchor.constraint(equalTo: view.topAnchor, constant: (view.bounds.height/2) - 60),
+            bottomCountdownLabel.topAnchor.constraint(equalTo: topCountdownLabel.bottomAnchor, constant: 50),
             bottomCountdownLabel.leadingAnchor.constraint(equalTo: view.layoutMarginsGuide.leadingAnchor),
-            bottomCountdownLabel.trailingAnchor.constraint(equalTo: view.layoutMarginsGuide.trailingAnchor)
+            bottomCountdownLabel.trailingAnchor.constraint(equalTo: view.layoutMarginsGuide.trailingAnchor),
+            
+            countdownSingle.view.topAnchor.constraint(equalTo: bottomCountdownLabel.bottomAnchor, constant: view.bounds.height/10),
+            countdownSingle.view.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            countdownSingle.view.trailingAnchor.constraint(equalTo: view.trailingAnchor),
         ])
         configCompleteButton()
     }
     
-    
-    
     //MARK: Configure the progress bar, message label, and remaining label
     public func configureProgress() {
-        let messages = ["Great Job!", "Great Work!", "Amazing Work!"]
-        navigationController?.navigationBar.topItem?.title = "Progress"
+        if goalType == "main" {
+            navigationController?.navigationBar.topItem?.title = "Progress"
+        } else {
+            self.parent?.title = "Progress"
+        }
         let progress = ProgressBarView(currentNum: currentNum!, endNum: endNum!, isGainGoal: isGainGoal)
         progressPercent = progress.getPercentage(currentNum!, endNum!, isGainGoal: isGainGoal).percentage
         self.view.addSubview(progress)
         progress.translatesAutoresizingMaskIntoConstraints = false
         progress.shape.strokeColor = goalColor.cgColor
         
+        if goalType == "main" {
+            if progressPercent == 100.0 {
+                HomeVC.goals[currentGoalIndex!].isGoalComplete = true
+                DataManager.shared.save()
+            } else if progressPercent ?? 0 >= 0 && progressPercent ?? 0 < 100.0 {
+                HomeVC.goals[currentGoalIndex!].isGoalComplete = false
+                DataManager.shared.save()
+            }
+        } else if goalType == "sub" {
+            if progressPercent == 100.0 {
+                SubGoalsVC.subGoals[currentGoalIndex!].isGoalComplete = true
+                DataManager.shared.save()
+            } else if progressPercent ?? 0 >= 0 && progressPercent ?? 0 < 100.0 {
+                SubGoalsVC.subGoals[currentGoalIndex!].isGoalComplete = false
+                DataManager.shared.save()
+            }
+        }
+        
+        configMessageLabels()
+        
+        NSLayoutConstraint.activate([
+            progress.containerView.topAnchor.constraint(equalTo: self.view.topAnchor, constant: (view.bounds.height/4) + topbarHeight + 10),
+            progress.containerView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: view.bounds.width/2),
+            progress.containerView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            progress.containerView.heightAnchor.constraint(equalToConstant: view.bounds.width),
+            
+            messageLabel.topAnchor.constraint(equalTo: progress.containerView.topAnchor, constant: view.bounds.width/1.8),
+            messageLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            messageLabel.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            
+            remaining.topAnchor.constraint(equalTo: messageLabel.bottomAnchor, constant: 10),
+            remaining.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            remaining.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+        ])
+    }
+    
+    func configMessageLabels() {
+        let messages = ["Great Job!", "Great Work!", "Amazing Work!"]
         view.addSubview(remaining)
         var difference: Double = 0
         if isGainGoal && (currentNum! >= endNum!) {
@@ -269,6 +331,8 @@ class GoalVC: UIViewController {
         messageLabel.numberOfLines = 2
         
         // change the message depending on completion percentage
+        let progress = ProgressBarView(currentNum: currentNum!, endNum: endNum!, isGainGoal: isGainGoal)
+        progressPercent = progress.getPercentage(currentNum!, endNum!, isGainGoal: isGainGoal).percentage
         if let percentage = Double(progress.getPercentage(currentNum!, endNum!, isGainGoal: isGainGoal).percentage.formatToString) {
             switch percentage {
             case 0..<49.9:
@@ -285,69 +349,65 @@ class GoalVC: UIViewController {
                 messageLabel.text = "Continue"
             }
         }
-        
-        if goalType == "main" {
-            if progressPercent == 100.0 {
-                HomeVC.goals[currentGoalIndex!].isGoalComplete = true
-                DataManager.shared.save()
-            } else if progressPercent ?? 0 >= 0 && progressPercent ?? 0 < 100.0 {
-                HomeVC.goals[currentGoalIndex!].isGoalComplete = false
-                DataManager.shared.save()
-            }
-        } else if goalType == "sub" {
-            if progressPercent == 100.0 {
-                SubGoalsVC.subGoals[currentGoalIndex!].isGoalComplete = true
-                DataManager.shared.save()
-            } else if progressPercent ?? 0 >= 0 && progressPercent ?? 0 < 100.0 {
-                SubGoalsVC.subGoals[currentGoalIndex!].isGoalComplete = false
-                DataManager.shared.save()
-            }
-        }
-        
-        NSLayoutConstraint.activate([
-            progress.topAnchor.constraint(equalTo: view.layoutMarginsGuide.topAnchor, constant: 50),
-            progress.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            progress.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            
-            messageLabel.topAnchor.constraint(equalTo: progress.bottomAnchor, constant: 340),
-            messageLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            messageLabel.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            
-            remaining.topAnchor.constraint(equalTo: messageLabel.bottomAnchor, constant: 3),
-            remaining.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            remaining.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-        ])
     }
     
     // setting up both the progress view and the countdown view
     func configCountdownAndNums() {
         let progress = ProgressBarView(currentNum: currentNum!, endNum: endNum!, isGainGoal: isGainGoal)
         progressPercent = progress.getPercentage(currentNum!, endNum!, isGainGoal: isGainGoal).percentage
-        if progress.percentage == "100%" {
-            configureProgress()
-            return
+        progress.shape.strokeColor = goalColor.cgColor
+        progress.translatesAutoresizingMaskIntoConstraints = false
+        self.view.addSubview(progress)
+
+        if goalType == "main" {
+            navigationController?.navigationBar.topItem?.title = "Progress"
+        } else {
+            self.parent?.title = "Progress"
         }
         
-        self.view.addSubview(progress)
-        progress.translatesAutoresizingMaskIntoConstraints = false
-        navigationController?.navigationBar.topItem?.title = "Progress"
-        
-        progress.shape.strokeColor = goalColor.cgColor
-        
-        let countdown = DaysRemainingView(dateString: date!)
-        view.addSubview(countdown)
-        countdown.translatesAutoresizingMaskIntoConstraints = false
-        
-        NSLayoutConstraint.activate([
-            progress.topAnchor.constraint(equalTo: view.layoutMarginsGuide.topAnchor, constant: 50),
-            progress.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            progress.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+        if progress.percentage == "100%" {
+            configMessageLabels()
+            NSLayoutConstraint.activate([
+                progress.containerView.topAnchor.constraint(equalTo: self.view.topAnchor, constant: (view.bounds.height/4) + topbarHeight + 10),
+                progress.containerView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: view.bounds.width/2),
+                progress.containerView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+                progress.containerView.heightAnchor.constraint(equalToConstant: view.bounds.width),
+                
+                messageLabel.topAnchor.constraint(equalTo: progress.containerView.topAnchor, constant: view.bounds.width/1.8),
+                messageLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+                messageLabel.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+                
+                remaining.topAnchor.constraint(equalTo: messageLabel.bottomAnchor, constant: 10),
+                remaining.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+                remaining.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            ])
+        } else {
+            view.addSubview(bottomCountdownLabel)
+            bottomCountdownLabel.translatesAutoresizingMaskIntoConstraints = false
+            bottomCountdownLabel.text = "Time Remaining"
+            bottomCountdownLabel.textAlignment = .center
+            bottomCountdownLabel.font = .boldSystemFont(ofSize: 35)
             
-            countdown.topAnchor.constraint(equalTo: progress.bottomAnchor, constant: 100),
-            countdown.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            countdown.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            countdown.heightAnchor.constraint(equalToConstant: 200)
-        ])
+            addChild(countdown)
+            view.addSubview(countdown.view)
+            countdown.didMove(toParent: self)
+            countdown.view.translatesAutoresizingMaskIntoConstraints = false
+            
+            NSLayoutConstraint.activate([
+                progress.containerView.topAnchor.constraint(equalTo: self.view.topAnchor, constant: (view.bounds.height/4) + topbarHeight + 10),
+                progress.containerView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: view.bounds.width/2),
+                progress.containerView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+                progress.containerView.heightAnchor.constraint(equalToConstant: view.bounds.width),
+                
+                bottomCountdownLabel.topAnchor.constraint(equalTo: progress.containerView.topAnchor, constant: view.bounds.width/1.85),
+                bottomCountdownLabel.leadingAnchor.constraint(equalTo: view.layoutMarginsGuide.leadingAnchor),
+                bottomCountdownLabel.trailingAnchor.constraint(equalTo: view.layoutMarginsGuide.trailingAnchor),
+                
+                countdown.view.bottomAnchor.constraint(equalTo: bottomCountdownLabel.bottomAnchor, constant: view.bounds.height/10),
+                countdown.view.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+                countdown.view.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            ])
+        }
     }
 }
 

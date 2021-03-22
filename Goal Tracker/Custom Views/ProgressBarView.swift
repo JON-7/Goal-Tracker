@@ -21,8 +21,9 @@ class ProgressBarView: UIView {
     var timer: Timer!
     
     lazy var containerView: UIView = {
-        let view = UIView(frame: CGRect(x: 0, y: 0, width: UIScreen.main.bounds.width, height: 300))
-        view.translatesAutoresizingMaskIntoConstraints = false
+//        let view = UIView(frame: CGRect(x: 0, y: 0, width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.width))
+        let view = UIView()
+        //view.translatesAutoresizingMaskIntoConstraints = false
         return view
     }()
     
@@ -44,7 +45,6 @@ class ProgressBarView: UIView {
     }
     
     func configureProgress() {
-        
         configureLabel()
         configureProgressCircle()
         backgroundColor = .secondarySystemBackground
@@ -75,7 +75,6 @@ class ProgressBarView: UIView {
     
     func configureLabel() {
         containerView.addSubview(progressLabel)
-        progressLabel.sizeToFit()
         progressLabel.textAlignment = .center
         progressLabel.text = "\(getPercentage(currentNum!, endNum!, isGainGoal: isGainGoal).percentage.formatToString)%"
         progressLabel.font = .systemFont(ofSize: 70, weight: .bold)

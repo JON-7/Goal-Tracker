@@ -7,33 +7,44 @@
 
 import UIKit
 
-class GoalTextLabel: UITextView {
-    override init(frame: CGRect, textContainer: NSTextContainer?) {
-        super.init(frame: frame, textContainer: nil)
+class GoalTextLabel: UIView {
+    var label = UILabel()
+    var labelText: String!
+    
+    lazy var containerView: UIView = {
+        let view = UIView()
+        view.translatesAutoresizingMaskIntoConstraints = false
+        return view
+    }()
+    
+    required init(title: String) {
+        super.init(frame: .zero)
+        self.labelText = title
+        addSubview(containerView)
+        configure()
     }
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
     
-    init(title: String) {
-        super.init(frame: .zero, textContainer: nil)
-        self.text = title
-        configure()
-    }
-    
-    var label = UILabel()
-    var titles = UILabel()
-    
     func configure() {
-        translatesAutoresizingMaskIntoConstraints = false
-        font = .preferredFont(forTextStyle: .subheadline)
-        isEditable = false
-        isSelectable = false
-        textAlignment = NSTextAlignment.center
-        clipsToBounds = true
-        layer.cornerRadius = 10
-        layer.maskedCorners = [.layerMinXMinYCorner, .layerMinXMaxYCorner]
-        backgroundColor = UIColor(named: "createGoalLabelColor")
+        containerView.addSubview(label)
+        containerView.clipsToBounds = true
+        containerView.layer.cornerRadius = 10
+        containerView.layer.maskedCorners = [.layerMinXMinYCorner, .layerMinXMaxYCorner]
+        containerView.backgroundColor = UIColor(named: "createGoalLabelColor")
+        
+        label.translatesAutoresizingMaskIntoConstraints = false
+        label.text = labelText
+        label.font = .preferredFont(forTextStyle: .subheadline)
+        label.numberOfLines = 2
+        label.preferredMaxLayoutWidth = 100
+        label.textAlignment = .center
+        
+        NSLayoutConstraint.activate([
+            self.label.centerXAnchor.constraint(equalTo: containerView.centerXAnchor),
+            self.label.centerYAnchor.constraint(equalTo: containerView.centerYAnchor)
+        ])
     }
 }

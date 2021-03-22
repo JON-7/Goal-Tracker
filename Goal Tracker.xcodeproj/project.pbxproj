@@ -81,6 +81,15 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		FC515F2E260642F6003DCF7F /* cells */ = {
+			isa = PBXGroup;
+			children = (
+				FCC937A825DA016D00A5EAAB /* CollectionViewCell.swift */,
+				FC79B3CA25DCBC4E00256986 /* TableViewCell.swift */,
+			);
+			path = cells;
+			sourceTree = "<group>";
+		};
 		FCC9371725D732EA00A5EAAB = {
 			isa = PBXGroup;
 			children = (
@@ -114,11 +123,10 @@
 		FCC9374125D7336500A5EAAB /* Custom Views */ = {
 			isa = PBXGroup;
 			children = (
+				FC515F2E260642F6003DCF7F /* cells */,
 				FCC937A725DA016D00A5EAAB /* GoalButton.swift */,
 				FCC937A625DA016D00A5EAAB /* GoalTextField.swift */,
 				FCC937A925DA016D00A5EAAB /* GoalTextLabel.swift */,
-				FCC937A825DA016D00A5EAAB /* CollectionViewCell.swift */,
-				FC79B3CA25DCBC4E00256986 /* TableViewCell.swift */,
 				FC79B47625E4726A00256986 /* ProgressBarView.swift */,
 				FC79B47925E479BB00256986 /* DaysRemainingView.swift */,
 			);
@@ -414,6 +422,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = B43W8HTAW5;
 				INFOPLIST_FILE = "Goal Tracker/Info.plist";
@@ -421,8 +430,9 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "com.jesco.Goal-Tracker";
+				PRODUCT_BUNDLE_IDENTIFIER = com.jesco.GoalTracker;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = 1;
 			};
@@ -433,6 +443,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = B43W8HTAW5;
 				INFOPLIST_FILE = "Goal Tracker/Info.plist";
@@ -440,8 +451,9 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "com.jesco.Goal-Tracker";
+				PRODUCT_BUNDLE_IDENTIFIER = com.jesco.GoalTracker;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = 1;
 			};

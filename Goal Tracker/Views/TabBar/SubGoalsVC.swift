@@ -40,7 +40,7 @@ class SubGoalsVC: UIViewController {
             self.collectionView!.collectionViewLayout.invalidateLayout()
             self.collectionView!.layoutSubviews()
             self.collectionView.showsVerticalScrollIndicator = false
-            
+            self.title = "Sub-Goals"
             if SubGoalsVC.subGoals.count > 1 {
                 SubGoalsVC.subGoals.sort(by: {$0.index < $1.index})
             }
@@ -53,7 +53,7 @@ class SubGoalsVC: UIViewController {
         NotificationCenter.default.addObserver(self, selector: #selector(updateUI), name: Notification.Name("updateGoalUI"), object: nil)
         collectionView!.reloadData()
         collectionView.backgroundColor = UIColor(named: "mainBackgroundColor")
-        navigationItem.title = "Sub-Goals"
+        //self.parent?.title = "Sub-Goals"
         navigationController?.navigationBar.prefersLargeTitles = true
         collectionView.dataSource = self
         collectionView.delegate = self
@@ -139,7 +139,6 @@ extension SubGoalsVC: UICollectionViewDataSource, UICollectionViewDelegate {
         return cell
     }
     
-    
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         
         if indexPath.item == SubGoalsVC.subGoals.count {
@@ -168,7 +167,7 @@ extension SubGoalsVC: UICollectionViewDataSource, UICollectionViewDelegate {
             vc.isGainGoal = SubGoalsVC.subGoals[indexPath.row].isGainGoal
             vc.isComplete = SubGoalsVC.subGoals[indexPath.row].isGoalComplete
             
-            let navVC = UINavigationController(rootViewController: vc)
+            //let navVC = UINavigationController(rootViewController: vc)
             vc.navigationItem.leftBarButtonItem = .init(
                 image: UIImage(systemName: "arrow.backward"),
                 style: .plain,
@@ -180,15 +179,15 @@ extension SubGoalsVC: UICollectionViewDataSource, UICollectionViewDelegate {
                 style: .plain,
                 target: self,
                 action: #selector(editGoal))
-            navVC.modalPresentationStyle = .fullScreen
-            present(navVC, animated: true)
+            vc.modalPresentationStyle = .fullScreen
+            navigationController?.pushViewController(vc, animated: true)
         }
         currentIndex = indexPath.item
     }
     
     @objc func goBack() {
-        
-        dismiss(animated: true)
+        navigationController?.popViewController(animated: true)
+        //dismiss(animated: true)
     }
     
     @objc func editGoal() {
@@ -214,7 +213,7 @@ extension SubGoalsVC: UICollectionViewDataSource, UICollectionViewDelegate {
         nav.modalPresentationStyle = .fullScreen
         vc.navigationController?.navigationBar.prefersLargeTitles = true
         vc.navigationController?.navigationBar.topItem?.title = " Edit Sub-Goal"
-        vc.navigationItem.rightBarButtonItem = .init(barButtonSystemItem: .close, target: self, action: #selector(closeView))
+        //vc.navigationItem.rightBarButtonItem = .init(barButtonSystemItem: .close, target: self, action: #selector(closeView))
         
         DispatchQueue.main.async {
             self.getTopMostViewController()?.present(nav, animated: true, completion: nil)

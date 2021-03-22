@@ -55,7 +55,7 @@ class CreateGoalVC: UIViewController {
     let currentNumberLabel = GoalTextLabel(title: "Current Number")
     let currentNumberTF = GoalTextField()
     
-    let numberGoalLabel = GoalTextLabel(title: "Goal Number")
+    let numberGoalLabel = GoalTextLabel(title: "Goal \nNumber")
     let numberTextfield = GoalTextField()
     
     let colorLabel = GoalTextLabel(title: "Goal Color")
@@ -70,10 +70,12 @@ class CreateGoalVC: UIViewController {
     let deleteButton = GoalButton()
     let trailingPadding = CGFloat(5)
     let topPadding = CGFloat(19)
-    let heightMultiplier = CGFloat(0.066)
+    let heightMultiplier = CGFloat(0.06) //0.066
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        self.navigationController?.interactivePopGestureRecognizer?.delegate = nil
+        self.navigationController?.interactivePopGestureRecognizer?.isEnabled = true
         view.backgroundColor = .secondarySystemBackground
         goalTextfield.delegate = self
         dateTextfield.delegate = self
@@ -116,7 +118,7 @@ class CreateGoalVC: UIViewController {
     
     func configureCloseButton() {
         if action == "edit" {
-            navigationItem.rightBarButtonItem = .init(barButtonSystemItem: .close, target: self, action: #selector(closeView))
+            navigationItem.leftBarButtonItem = .init(barButtonSystemItem: .close, target: self, action: #selector(closeView))
         }
     }
     
@@ -133,7 +135,7 @@ class CreateGoalVC: UIViewController {
             } else {
                 leftTitle = "Mark Goal As Complete"
             }
-            navigationItem.leftBarButtonItem = .init(title: leftTitle, style: .plain, target: self, action: #selector(updateNav))
+            navigationItem.rightBarButtonItem = .init(title: leftTitle, style: .plain, target: self, action: #selector(updateNav))
         }
     }
     
@@ -193,30 +195,30 @@ class CreateGoalVC: UIViewController {
     
     func configureGoalNameTF() {
         view.addSubview(goalTextfield)
-        view.addSubview(goalLabel)
+        self.view.addSubview(goalLabel)
         goalTextfield.text = goalTFText
         
         if action == "create" {
             NSLayoutConstraint.activate([
-                goalLabel.topAnchor.constraint(equalTo: createGoalLabel.bottomAnchor, constant: -20),
-                goalLabel.leadingAnchor.constraint(equalTo: view.layoutMarginsGuide.leadingAnchor, constant: trailingPadding),
-                goalLabel.widthAnchor.constraint(equalToConstant: 100),
-                goalLabel.heightAnchor.constraint(equalToConstant: view.bounds.height * heightMultiplier),
+                goalLabel.containerView.topAnchor.constraint(equalTo: createGoalLabel.bottomAnchor, constant: -20),
+                goalLabel.containerView.leadingAnchor.constraint(equalTo: view.layoutMarginsGuide.leadingAnchor, constant: trailingPadding),
+                goalLabel.containerView.widthAnchor.constraint(equalToConstant: 100),
+                goalLabel.containerView.heightAnchor.constraint(equalToConstant: view.bounds.height * heightMultiplier),
                 
                 goalTextfield.topAnchor.constraint(equalTo: createGoalLabel.bottomAnchor, constant: -20),
-                goalTextfield.leadingAnchor.constraint(equalTo: goalLabel.trailingAnchor),
+                goalTextfield.leadingAnchor.constraint(equalTo: goalLabel.containerView.trailingAnchor),
                 goalTextfield.trailingAnchor.constraint(equalTo: view.layoutMarginsGuide.trailingAnchor, constant: -trailingPadding),
                 goalTextfield.heightAnchor.constraint(equalToConstant: view.bounds.height * heightMultiplier)
             ])
         } else {
             NSLayoutConstraint.activate([
-                goalLabel.topAnchor.constraint(equalTo: view.layoutMarginsGuide.topAnchor),
-                goalLabel.leadingAnchor.constraint(equalTo: view.layoutMarginsGuide.leadingAnchor, constant: trailingPadding),
-                goalLabel.widthAnchor.constraint(equalToConstant: 100),
-                goalLabel.heightAnchor.constraint(equalToConstant: view.bounds.height * heightMultiplier),
+                goalLabel.containerView.topAnchor.constraint(equalTo: view.layoutMarginsGuide.topAnchor),
+                goalLabel.containerView.leadingAnchor.constraint(equalTo: view.layoutMarginsGuide.leadingAnchor, constant: trailingPadding),
+                goalLabel.containerView.widthAnchor.constraint(equalToConstant: 100),
+                goalLabel.containerView.heightAnchor.constraint(equalToConstant: view.bounds.height * heightMultiplier),
                 
                 goalTextfield.topAnchor.constraint(equalTo: view.layoutMarginsGuide.topAnchor),
-                goalTextfield.leadingAnchor.constraint(equalTo: goalLabel.trailingAnchor),
+                goalTextfield.leadingAnchor.constraint(equalTo: goalLabel.containerView.trailingAnchor),
                 goalTextfield.trailingAnchor.constraint(equalTo: view.layoutMarginsGuide.trailingAnchor, constant: -trailingPadding),
                 goalTextfield.heightAnchor.constraint(equalToConstant: view.bounds.height * heightMultiplier)
             ])
@@ -225,20 +227,20 @@ class CreateGoalVC: UIViewController {
     
     func configureDateTF() {
         view.addSubview(dateTextfield)
-        view.addSubview(dateLabel)
+        self.view.addSubview(dateLabel)
         
         dateTextfield.text = dateTFText ?? ""
         if action == "create" { dateTextfield.placeholder = "Optional" }
         createDatePicker()
         
         NSLayoutConstraint.activate([
-            dateLabel.topAnchor.constraint(equalTo: goalLabel.bottomAnchor, constant: view.bounds.height * heightMultiplier/2),
-            dateLabel.leadingAnchor.constraint(equalTo: view.layoutMarginsGuide.leadingAnchor, constant: trailingPadding),
-            dateLabel.widthAnchor.constraint(equalToConstant: 100),
-            dateLabel.heightAnchor.constraint(equalToConstant: view.bounds.height * heightMultiplier),
+            dateLabel.containerView.topAnchor.constraint(equalTo: goalLabel.containerView.bottomAnchor, constant: view.bounds.height * heightMultiplier/2),
+            dateLabel.containerView.leadingAnchor.constraint(equalTo: view.layoutMarginsGuide.leadingAnchor, constant: trailingPadding),
+            dateLabel.containerView.widthAnchor.constraint(equalToConstant: 100),
+            dateLabel.containerView.heightAnchor.constraint(equalToConstant: view.bounds.height * heightMultiplier),
             
-            dateTextfield.topAnchor.constraint(equalTo: goalLabel.bottomAnchor, constant: view.bounds.height * heightMultiplier/2),
-            dateTextfield.leadingAnchor.constraint(equalTo: dateLabel.trailingAnchor),
+            dateTextfield.topAnchor.constraint(equalTo: goalLabel.containerView.bottomAnchor, constant: view.bounds.height * heightMultiplier/2),
+            dateTextfield.leadingAnchor.constraint(equalTo: dateLabel.containerView.trailingAnchor),
             dateTextfield.trailingAnchor.constraint(equalTo: view.layoutMarginsGuide.trailingAnchor, constant: -trailingPadding),
             dateTextfield.heightAnchor.constraint(equalToConstant: view.bounds.height * heightMultiplier),
         ])
@@ -246,20 +248,20 @@ class CreateGoalVC: UIViewController {
     
     func configureCurrentNumTF() {
         view.addSubview(currentNumberTF)
-        view.addSubview(currentNumberLabel)
+        self.view.addSubview(currentNumberLabel)
         currentNumberTF.keyboardType = .decimalPad
         currentNumberTF.inputAccessoryView = configureDone()
         currentNumberTF.text = currentNumTFText ?? ""
         if action == "create" { currentNumberTF.placeholder = "Optional" }
         
         NSLayoutConstraint.activate([
-            currentNumberLabel.topAnchor.constraint(equalTo: dateLabel.bottomAnchor, constant: view.bounds.height * heightMultiplier/2),
-            currentNumberLabel.leadingAnchor.constraint(equalTo: view.layoutMarginsGuide.leadingAnchor, constant: trailingPadding),
-            currentNumberLabel.widthAnchor.constraint(equalToConstant: 100),
-            currentNumberLabel.heightAnchor.constraint(equalToConstant: view.bounds.height * heightMultiplier),
+            currentNumberLabel.containerView.topAnchor.constraint(equalTo: dateLabel.containerView.bottomAnchor, constant: view.bounds.height * heightMultiplier/2),
+            currentNumberLabel.containerView.leadingAnchor.constraint(equalTo: view.layoutMarginsGuide.leadingAnchor, constant: trailingPadding),
+            currentNumberLabel.containerView.widthAnchor.constraint(equalToConstant: 100),
+            currentNumberLabel.containerView.heightAnchor.constraint(equalToConstant: view.bounds.height * heightMultiplier),
             
-            currentNumberTF.topAnchor.constraint(equalTo: dateLabel.bottomAnchor, constant: view.bounds.height * heightMultiplier/2),
-            currentNumberTF.leadingAnchor.constraint(equalTo: currentNumberLabel.trailingAnchor),
+            currentNumberTF.topAnchor.constraint(equalTo: dateLabel.containerView.bottomAnchor, constant: view.bounds.height * heightMultiplier/2),
+            currentNumberTF.leadingAnchor.constraint(equalTo: currentNumberLabel.containerView.trailingAnchor),
             currentNumberTF.trailingAnchor.constraint(equalTo: view.layoutMarginsGuide.trailingAnchor, constant: -trailingPadding),
             currentNumberTF.heightAnchor.constraint(equalToConstant: view.bounds.height * heightMultiplier)
         ])
@@ -267,27 +269,27 @@ class CreateGoalVC: UIViewController {
     
     func configureNumGoalTF() {
         view.addSubview(numberTextfield)
-        view.addSubview(numberGoalLabel)
+        self.view.addSubview(numberGoalLabel)
         numberTextfield.keyboardType = .decimalPad
         numberTextfield.inputAccessoryView = configureDone()
         numberTextfield.text = finalNumTFText ?? ""
         if action == "create" { numberTextfield.placeholder = "Optional" }
         
         NSLayoutConstraint.activate([
-            numberGoalLabel.topAnchor.constraint(equalTo: currentNumberLabel.bottomAnchor, constant: view.bounds.height * heightMultiplier/2),
-            numberGoalLabel.leadingAnchor.constraint(equalTo: view.layoutMarginsGuide.leadingAnchor, constant: trailingPadding),
-            numberGoalLabel.widthAnchor.constraint(equalToConstant: 100),
-            numberGoalLabel.heightAnchor.constraint(equalToConstant: view.bounds.height * heightMultiplier),
+            numberGoalLabel.containerView.topAnchor.constraint(equalTo: currentNumberLabel.containerView.bottomAnchor, constant: view.bounds.height * heightMultiplier/2),
+            numberGoalLabel.containerView.leadingAnchor.constraint(equalTo: view.layoutMarginsGuide.leadingAnchor, constant: trailingPadding),
+            numberGoalLabel.containerView.widthAnchor.constraint(equalToConstant: 100),
+            numberGoalLabel.containerView.heightAnchor.constraint(equalToConstant: view.bounds.height * heightMultiplier),
             
-            numberTextfield.topAnchor.constraint(equalTo: currentNumberLabel.bottomAnchor, constant: view.bounds.height * heightMultiplier/2),
-            numberTextfield.leadingAnchor.constraint(equalTo: numberGoalLabel.trailingAnchor),
+            numberTextfield.topAnchor.constraint(equalTo: currentNumberLabel.containerView.bottomAnchor, constant: view.bounds.height * heightMultiplier/2),
+            numberTextfield.leadingAnchor.constraint(equalTo: numberGoalLabel.containerView.trailingAnchor),
             numberTextfield.trailingAnchor.constraint(equalTo: view.layoutMarginsGuide.trailingAnchor, constant: -trailingPadding),
             numberTextfield.heightAnchor.constraint(equalToConstant: view.bounds.height * heightMultiplier)
         ])
     }
     
     func configureGoalColor() {
-        view.addSubview(colorLabel)
+        self.view.addSubview(colorLabel)
         view.addSubview(colorButton)
         colorButton.translatesAutoresizingMaskIntoConstraints = false
         colorButton.clipsToBounds = true
@@ -296,13 +298,13 @@ class CreateGoalVC: UIViewController {
         colorButton.backgroundColor = color
         
         NSLayoutConstraint.activate([
-            colorLabel.topAnchor.constraint(equalTo: numberGoalLabel.bottomAnchor, constant: view.bounds.height * heightMultiplier/2),
-            colorLabel.leadingAnchor.constraint(equalTo: view.layoutMarginsGuide.leadingAnchor, constant: trailingPadding),
-            colorLabel.widthAnchor.constraint(equalToConstant: 100),
-            colorLabel.heightAnchor.constraint(equalToConstant: view.bounds.height * heightMultiplier),
+            colorLabel.containerView.topAnchor.constraint(equalTo: numberGoalLabel.containerView.bottomAnchor, constant: view.bounds.height * heightMultiplier/2),
+            colorLabel.containerView.leadingAnchor.constraint(equalTo: view.layoutMarginsGuide.leadingAnchor, constant: trailingPadding),
+            colorLabel.containerView.widthAnchor.constraint(equalToConstant: 100),
+            colorLabel.containerView.heightAnchor.constraint(equalToConstant: view.bounds.height * heightMultiplier),
             
-            colorButton.topAnchor.constraint(equalTo: numberGoalLabel.bottomAnchor, constant: view.bounds.height * heightMultiplier/2),
-            colorButton.leadingAnchor.constraint(equalTo: colorLabel.trailingAnchor),
+            colorButton.topAnchor.constraint(equalTo: numberGoalLabel.containerView.bottomAnchor, constant: view.bounds.height * heightMultiplier/2),
+            colorButton.leadingAnchor.constraint(equalTo: colorLabel.containerView.trailingAnchor),
             colorButton.trailingAnchor.constraint(equalTo: view.layoutMarginsGuide.trailingAnchor, constant: -trailingPadding),
             colorButton.heightAnchor.constraint(equalToConstant: view.bounds.height * heightMultiplier)
         ])
@@ -317,7 +319,7 @@ class CreateGoalVC: UIViewController {
     }
     
     func configureGainOrLose() {
-        view.addSubview(gainOrLoseLabel)
+        self.view.addSubview(gainOrLoseLabel)
         view.addSubview(gainButton)
         gainButton.translatesAutoresizingMaskIntoConstraints = false
         gainButton.setTitle("GAIN", for: .normal)
@@ -325,14 +327,12 @@ class CreateGoalVC: UIViewController {
     
         DispatchQueue.main.async { [self] in
             if isGainGoal {
-                print("GAIN")
                 gainButton.isSelected = true
                 loseButton.isSelected = false
                 gainButton.backgroundColor = color
                 loseButton.backgroundColor = .tertiarySystemBackground
             }
             if !isGainGoal {
-                print("LOSE")
                 loseButton.isSelected = true
                 gainButton.isSelected = false
                 loseButton.backgroundColor = color
@@ -349,17 +349,17 @@ class CreateGoalVC: UIViewController {
         loseButton.layer.maskedCorners = [.layerMaxXMaxYCorner, .layerMaxXMinYCorner]
         
         NSLayoutConstraint.activate([
-            gainOrLoseLabel.topAnchor.constraint(equalTo: colorLabel.bottomAnchor, constant: view.bounds.height * heightMultiplier/2),
-            gainOrLoseLabel.leadingAnchor.constraint(equalTo: view.layoutMarginsGuide.leadingAnchor, constant: trailingPadding),
-            gainOrLoseLabel.widthAnchor.constraint(equalToConstant: 100),
-            gainOrLoseLabel.heightAnchor.constraint(equalToConstant: view.bounds.height * heightMultiplier),
+            gainOrLoseLabel.containerView.topAnchor.constraint(equalTo: colorLabel.containerView.bottomAnchor, constant: view.bounds.height * heightMultiplier/2),
+            gainOrLoseLabel.containerView.leadingAnchor.constraint(equalTo: view.layoutMarginsGuide.leadingAnchor, constant: trailingPadding),
+            gainOrLoseLabel.containerView.widthAnchor.constraint(equalToConstant: 100),
+            gainOrLoseLabel.containerView.heightAnchor.constraint(equalToConstant: view.bounds.height * heightMultiplier),
             
-            gainButton.topAnchor.constraint(equalTo: colorLabel.bottomAnchor, constant: view.bounds.height * heightMultiplier/2),
-            gainButton.leadingAnchor.constraint(equalTo: gainOrLoseLabel.trailingAnchor),
+            gainButton.topAnchor.constraint(equalTo: colorLabel.containerView.bottomAnchor, constant: view.bounds.height * heightMultiplier/2),
+            gainButton.leadingAnchor.constraint(equalTo: gainOrLoseLabel.containerView.trailingAnchor),
             gainButton.heightAnchor.constraint(equalToConstant: view.bounds.height * heightMultiplier),
             gainButton.widthAnchor.constraint(equalToConstant: CGFloat((view.bounds.width - 20 - 100 - 20)) / 2),
             
-            loseButton.topAnchor.constraint(equalTo: colorLabel.bottomAnchor, constant: view.bounds.height * heightMultiplier/2),
+            loseButton.topAnchor.constraint(equalTo: colorLabel.containerView.bottomAnchor, constant: view.bounds.height * heightMultiplier/2),
             loseButton.leadingAnchor.constraint(equalTo: gainButton.trailingAnchor),
             loseButton.heightAnchor.constraint(equalToConstant: view.bounds.height * heightMultiplier),
             loseButton.widthAnchor.constraint(equalToConstant: CGFloat((view.bounds.width - 20 - 100 - 20)) / 2)
@@ -612,5 +612,8 @@ extension CreateGoalVC: UIColorPickerViewControllerDelegate {
 }
 
 extension UIViewController: UITextFieldDelegate, UINavigationControllerDelegate {
-    
+    var topbarHeight: CGFloat {
+            return (view.window?.windowScene?.statusBarManager?.statusBarFrame.height ?? 0.0) +
+                (self.navigationController?.navigationBar.frame.height ?? 0.0)
+        }
 }

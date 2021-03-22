@@ -35,7 +35,7 @@ class CreateNoteVC: UIViewController {
     var currentIndex: Int?
     var currentGoalIndex: Int?
     let padding = CGFloat(10)
-
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         configureNavigationBar()
@@ -47,12 +47,6 @@ class CreateNoteVC: UIViewController {
     }
     
     func configureNavigationBar() {
-        navigationItem.leftBarButtonItem = .init(
-            image: UIImage(systemName: "arrow.backward"),
-            style: .plain,
-            target: self,
-            action: #selector(goBack))
-        
         if action == "edit" {
             navigationItem.rightBarButtonItem = .init(
                 image: UIImage(systemName: "checkmark"),
@@ -66,6 +60,8 @@ class CreateNoteVC: UIViewController {
                 target: self,
                 action: #selector(createNote))
         }
+        self.navigationController?.interactivePopGestureRecognizer?.delegate = nil
+        self.navigationController?.interactivePopGestureRecognizer?.isEnabled = true
     }
     
     func configureTitleLabel() {
@@ -75,7 +71,7 @@ class CreateNoteVC: UIViewController {
         titleLabel.font = .boldSystemFont(ofSize: 20)
         
         NSLayoutConstraint.activate([
-            titleLabel.topAnchor.constraint(equalTo: view.layoutMarginsGuide.topAnchor, constant: 20),
+            titleLabel.topAnchor.constraint(equalTo: view.layoutMarginsGuide.topAnchor, constant: -40),
             titleLabel.leadingAnchor.constraint(equalTo: view.layoutMarginsGuide.leadingAnchor, constant: padding),
             titleLabel.trailingAnchor.constraint(equalTo: view.layoutMarginsGuide.trailingAnchor, constant: -padding),
             titleLabel.heightAnchor.constraint(equalToConstant: 20)
@@ -135,10 +131,6 @@ class CreateNoteVC: UIViewController {
         ])
     }
     
-    @objc func goBack() {
-        dismiss(animated: true, completion: nil)
-    }
-    
     @objc func createNote() {
         if noteTF.text != "" {
             var title: String
@@ -149,13 +141,12 @@ class CreateNoteVC: UIViewController {
             }
             
             let note = DataManager.shared.note(title: title, lastEdited: formatDate(), noteText: noteTF.text, date: Date(), goal: HomeVC.goals[goalIndex!])
-            
             NotesVC.notes.append(note)
             DataManager.shared.save()
-            dismiss(animated: true, completion: nil)
+            navigationController?.popViewController(animated: true)
         }
         else {
-            dismiss(animated: true, completion: nil)
+            navigationController?.popViewController(animated: true)
         }
     }
     
@@ -165,7 +156,8 @@ class CreateNoteVC: UIViewController {
         NotesVC.notes[noteIndex!].lastEdited = formatDate()
         NotesVC.notes[noteIndex!].date = Date()
         DataManager.shared.save()
-        self.presentingViewController?.presentingViewController?.dismiss(animated: true, completion: nil)
+        navigationController?.popViewController(animated: true)
+        NotificationCenter.default.post(name: NSNotification.Name("updateNote"), object: nil)
     }
     
     func dismissKeyboardByTap() {

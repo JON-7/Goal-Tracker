@@ -9,18 +9,7 @@ import UIKit
 
 class CreateNoteVC: UIViewController {
     
-    init(action: String, noteTitle: String, noteText: String) {
-        self.action = action
-        self.noteTitle = noteTitle
-        self.noteText = noteText
-        super.init(nibName: nil, bundle: nil)
-    }
-    
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-    
-    var action: String?
+    var action: Action
     var noteTitle: String?
     var noteText: String?
     
@@ -36,6 +25,17 @@ class CreateNoteVC: UIViewController {
     var currentGoalIndex: Int?
     let padding = CGFloat(10)
     
+    init(action: Action, noteTitle: String, noteText: String) {
+        self.action = action
+        self.noteTitle = noteTitle
+        self.noteText = noteText
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         configureNavigationBar()
@@ -47,15 +47,15 @@ class CreateNoteVC: UIViewController {
     }
     
     func configureNavigationBar() {
-        if action == "edit" {
+        if action == Action.edit {
             navigationItem.rightBarButtonItem = .init(
-                image: UIImage(systemName: "checkmark"),
+                image: Images.checkmark,
                 style: .plain,
                 target: self,
                 action: #selector(editNote))
         } else {
             navigationItem.rightBarButtonItem = .init(
-                image: UIImage(systemName: "checkmark"),
+                image: Images.checkmark,
                 style: .plain,
                 target: self,
                 action: #selector(createNote))
@@ -81,11 +81,11 @@ class CreateNoteVC: UIViewController {
     func configureTitleTF() {
         view.addSubview(titleTF)
         titleTF.translatesAutoresizingMaskIntoConstraints = false
-        titleTF.backgroundColor = UIColor(named: "noteTFColor")
+        titleTF.backgroundColor = Colors.noteTFColor
         titleTF.layer.cornerRadius = 10
         titleTF.textColor = .black
         
-        if action == "edit" {
+        if action == Action.edit {
             titleTF.text = noteTitle
         }
         
@@ -115,11 +115,11 @@ class CreateNoteVC: UIViewController {
         view.addSubview(noteTF)
         noteTF.translatesAutoresizingMaskIntoConstraints = false
         noteTF.layer.cornerRadius = 10
-        noteTF.backgroundColor = UIColor(named: "noteTFColor")
+        noteTF.backgroundColor = Colors.noteTFColor
         noteTF.font = .systemFont(ofSize: 22)
         noteTF.textColor = .black
         
-        if action == "edit" {
+        if action == Action.edit {
             noteTF.text = noteText
         }
         
@@ -157,12 +157,7 @@ class CreateNoteVC: UIViewController {
         NotesVC.notes[noteIndex!].date = Date()
         DataManager.shared.save()
         navigationController?.popViewController(animated: true)
-        NotificationCenter.default.post(name: NSNotification.Name("updateNote"), object: nil)
-    }
-    
-    func dismissKeyboardByTap() {
-        let tap = UITapGestureRecognizer(target: self.view, action: #selector(UIView.endEditing))
-        view.addGestureRecognizer(tap)
+        NotificationCenter.default.post(name: NSNotification.Name(NotificationName.updateNote), object: nil)
     }
     
     func formatDate() -> String {

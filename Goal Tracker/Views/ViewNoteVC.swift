@@ -25,7 +25,7 @@ class ViewNoteVC: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        NotificationCenter.default.addObserver(self, selector: #selector(updateNote), name: NSNotification.Name("updateNote"), object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(updateNote), name: NSNotification.Name(NotificationName.updateNote), object: nil)
         self.navigationController?.interactivePopGestureRecognizer?.delegate = nil
         self.navigationController?.interactivePopGestureRecognizer?.isEnabled = true
         configureTitleLabel()
@@ -78,7 +78,7 @@ class ViewNoteVC: UIViewController {
         noteText.layer.masksToBounds = true
         noteText.font = .preferredFont(forTextStyle: .headline)
         noteText.font = .systemFont(ofSize: 20)
-        noteText.backgroundColor = UIColor(named: "mainBackgroundColor")
+        noteText.backgroundColor = Colors.mainBackgroundColor
         view.addSubview(noteText)
         
         NSLayoutConstraint.activate([

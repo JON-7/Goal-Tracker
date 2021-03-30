@@ -14,47 +14,55 @@ class HomeVC: UIViewController {
     var currentIndex = 0
     var nameOnly: Bool?
     var completeGoalSelected: Bool?
+    var tabbarImages = [String]()
     
-    override func loadView() {
-        super.loadView()
-        // Setting up collection view
-        let cv = UICollectionView(frame: .zero, collectionViewLayout: UICollectionViewFlowLayout())
-        cv.translatesAutoresizingMaskIntoConstraints = false
-        view.addSubview(cv)
-        
-        NSLayoutConstraint.activate([
-            cv.topAnchor.constraint(equalTo: view.topAnchor, constant: -20),
-            cv.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            cv.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            cv.bottomAnchor.constraint(equalTo: view.bottomAnchor)
-        ])
-        
-        self.collectionView = cv
-    }
+    let goalViewController = GoalVC(goalType: GoalType.sub)
+    let subGoalViewController = SubGoalsVC()
+    let notesViewController = NotesVC()
     
     override func viewWillAppear(_ animated: Bool) {
-        NotificationCenter.default.addObserver(self, selector: #selector(reloadData), name: NSNotification.Name("newDataNotif"), object: nil)
-        collectionView.reloadData()
+        configureTitle()
+        NotificationCenter.default.addObserver(self, selector: #selector(reloadData), name: NSNotification.Name(NotificationName.reloadData), object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(closeView), name: Notification.Name("dismissNotif"), object: nil)
+    }
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        // retrieving all goal objects
+        HomeVC.goals = DataManager.shared.fetchGoals()
+        configureCollectionView()
+        configureLongPress()
+    }
+    
+    func configureTitle() {
         tabBarController?.hidesBottomBarWhenPushed = true
         navigationController?.navigationBar.prefersLargeTitles = true
         self.title = "GOALS"
     }
     
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        NotificationCenter.default.addObserver(self, selector: #selector(closeView), name: Notification.Name("dismissNotif"), object: nil)
-        // retrieving all goal objects
-        HomeVC.goals = DataManager.shared.fetchGoals()
-        //        navigationController?.navigationBar.prefersLargeTitles = true
-        //        self.title = "GOALS"
-        collectionView.backgroundColor = UIColor(named: "mainBackgroundColor")
+    func configureCollectionView() {
+        let cv = UICollectionView(frame: .zero, collectionViewLayout: UICollectionViewFlowLayout())
+        cv.frame = view.bounds
+        view.addSubview(cv)
+        
+        self.collectionView = cv
+        collectionView.backgroundColor = Colors.mainBackgroundColor
         collectionView.dataSource = self
         collectionView.delegate = self
-        collectionView.register(CollectionViewCell.self, forCellWithReuseIdentifier: "MyCell")
-        
+        collectionView.register(CollectionViewCell.self, forCellWithReuseIdentifier: CollectionViewCell.reuseID)
+    }
+    
+    // allows the user to hold their finger on a cell and move the cell around
+    func configureLongPress() {
         let gesture = UILongPressGestureRecognizer(target: self, action: #selector(handleLongPressGesture))
         collectionView.addGestureRecognizer(gesture)
         collectionView.showsVerticalScrollIndicator = false
+    }
+    
+    @objc func reloadData() {
+        DispatchQueue.main.async {
+            self.collectionView.reloadData()
+        }
     }
     
     // configuring drag and drop
@@ -75,8 +83,63 @@ class HomeVC: UIViewController {
         }
     }
     
-    @objc func reloadData() {
-        self.collectionView.reloadData()
+    func assignDataToVCs(index: Int) {
+        let goal = HomeVC.goals[index]
+        // passing data to view controllers
+        subGoalViewController.goal = goal
+        subGoalViewController.goalName = goal.name
+        subGoalViewController.currentGoalIndex = currentIndex
+        
+        notesViewController.goalIndex = index
+        notesViewController.goal = goal
+        
+        goalViewController.goalName = goal.name
+        goalViewController.date = goal.date
+        goalViewController.currentNum = goal.startNum
+        goalViewController.endNum = goal.endNum
+        goalViewController.currentGoalIndex = index
+        goalViewController.goalType = GoalType.main
+        goalViewController.isGainGoal = goal.isGainGoal
+        goalViewController.isComplete = goal.isGoalComplete
+    }
+    
+    func configureTabBar(index: Int) {
+        let goal = HomeVC.goals[index]
+        let tabbar = UITabBarController()
+        let goalVC = UINavigationController(rootViewController: goalViewController)
+        let subGoalsVC = UINavigationController(rootViewController: subGoalViewController)
+        let notesVC = UINavigationController(rootViewController: notesViewController)
+
+        goalVC.title = "GOAL"
+        subGoalsVC.title = "Sub-Goals"
+        notesVC.title = "Notes"
+        
+        // if goal contains only a name then the tabbar will only have a subgoal and notes view
+        if goal.startNum == 0.0 && goal.endNum == 0.0 && goal.date == "" {
+            tabbar.setViewControllers([subGoalsVC, notesVC], animated: true)
+            nameOnly = true
+            subGoalViewController.navigationItem.leftBarButtonItem = .init(barButtonSystemItem: .close, target: self, action: #selector(goHome))
+            
+            subGoalViewController.navigationItem.rightBarButtonItem = .init(image: Images.pencil, style: .plain, target: self, action: #selector(editGoal))
+            
+            tabbarImages = ["applescript", "note.text"]
+        } else {
+            // if the goal contains more than just a name then all three views will be shown in the tabbar
+            tabbar.setViewControllers([goalVC, subGoalsVC, notesVC], animated: true)
+            
+            goalViewController.navigationItem.leftBarButtonItem = .init(barButtonSystemItem: .close, target: self, action: #selector(goHome))
+            
+            goalViewController.navigationItem.rightBarButtonItem = .init(image: Images.pencil, style: .plain, target: self, action: #selector(editGoal))
+            
+            tabbarImages = ["scroll.fill","applescript", "note.text"]
+        }
+        
+        guard let items = tabbar.tabBar.items else { return }
+        for n in 0..<items.count {
+            items[n].image = UIImage(systemName: tabbarImages[n])
+        }
+        tabbar.modalPresentationStyle = .fullScreen
+        present(tabbar, animated: true)
     }
 }
 
@@ -90,48 +153,23 @@ extension HomeVC: UICollectionViewDataSource, UICollectionViewDelegate {
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "MyCell", for: indexPath) as! CollectionViewCell
-        cell.clipsToBounds = true
-        cell.textLabel.numberOfLines = 1
-        cell.textLabel.textColor = .white
-        cell.textLabel.font = .systemFont(ofSize: 30, weight: .semibold)        
-        cell.layer.cornerRadius = 20
-        
-        // creates the goal cells
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: CollectionViewCell.reuseID, for: indexPath) as! CollectionViewCell
+        // If the cell is not the last cell (create goal cell) then give it a title and cell color
         if indexPath.item < HomeVC.goals.count {
-            cell.layer.cornerRadius = 20
-            cell.textLabel.backgroundColor = HomeVC.goals[indexPath.row].cellColor
-            cell.textLabel.numberOfLines = 2
-            
-            let attributeString: NSMutableAttributedString = NSMutableAttributedString(string: HomeVC.goals[indexPath.row].name ?? "Name not found")
-            attributeString.addAttribute(NSAttributedString.Key.strikethroughStyle, value: 2, range: NSMakeRange(0, attributeString.length))
-            if HomeVC.goals[indexPath.row].isGoalComplete {
-                cell.textLabel.attributedText = attributeString
-            } else {
-                attributeString.removeAttribute(NSAttributedString.Key.strikethroughStyle, range: NSMakeRange(0, attributeString.length))
-                cell.textLabel.attributedText = attributeString
-            }
-        }
-        
-        // creates the create goal button
-        if indexPath.item == HomeVC.goals.count {
-            let attributeString: NSMutableAttributedString = NSMutableAttributedString(string: "Create Goal")
-            cell.textLabel.attributedText = attributeString
-            cell.layer.cornerRadius = 45
-            cell.textLabel.backgroundColor = UIColor(named: "goalActionBtnColor")
-            cell.textLabel.textColor = .black
+            cell.createMainCell(cellTitle: HomeVC.goals[indexPath.row].name!, cellColor: HomeVC.goals[indexPath.row].cellColor!, isComplete: HomeVC.goals[indexPath.row].isGoalComplete)
+        } else {
+            cell.createGoalCell()
         }
         return cell
     }
-    
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         currentIndex = indexPath.item
         // creates new goal when create goal button is pressed
         if indexPath.item == HomeVC.goals.count {
             let vc = CreateGoalVC(
-                goalType: "main",
-                action: "create",
+                goalType: GoalType.main,
+                action: Action.create,
                 goalTFText: "",
                 dateTFText: "",
                 currentNumTFText: "",
@@ -142,90 +180,10 @@ extension HomeVC: UICollectionViewDataSource, UICollectionViewDelegate {
             present(vc, animated: true)
         }
         
-        //MARK: Creating a tab ViewController when a goal cell is tapped with views depending on the type of goal
+        //MARK: Creates a tabbar containing different views depending on the goal type
         if indexPath.item < HomeVC.goals.count {
-            
-            let tabbar = UITabBarController()
-            let goal = HomeVC.goals[indexPath.row]
-            
-            let goalViewController = GoalVC(goalType: "sub")
-            let subGoalViewController = SubGoalsVC()
-            let notesViewController = NotesVC()
-            
-            // passing data to view controllers
-            subGoalViewController.goal = goal
-            subGoalViewController.goalName = goal.name
-            subGoalViewController.currentGoalIndex = currentIndex
-            
-            notesViewController.goalIndex = indexPath.row
-            notesViewController.goal = goal
-            
-            goalViewController.goalName = goal.name
-            goalViewController.date = goal.date
-            goalViewController.currentNum = goal.startNum
-            goalViewController.endNum = goal.endNum
-            goalViewController.currentGoalIndex = indexPath.item
-            goalViewController.goalType = "main"
-            goalViewController.isGainGoal = goal.isGainGoal
-            goalViewController.isComplete = goal.isGoalComplete
-            
-            let goalVC = UINavigationController(rootViewController: goalViewController)
-            let subGoalsVC = UINavigationController(rootViewController: subGoalViewController)
-            let notesVC = UINavigationController(rootViewController: notesViewController)
-            
-            goalVC.title = "GOAL"
-            subGoalsVC.title = "Sub-Goals"
-            notesVC.title = "Notes"
-            
-            // if goal contains only a name then the tabbar will only have a subgoal and notes view
-            if goal.startNum == 0.0 && goal.endNum == 0.0 && goal.date == "" {
-                tabbar.setViewControllers([subGoalsVC, notesVC], animated: true)
-                nameOnly = true
-                subGoalViewController.navigationItem.leftBarButtonItem = .init(
-                    barButtonSystemItem: .close,
-                    target: self,
-                    action: #selector(goHome))
-                
-                subGoalViewController.navigationItem.rightBarButtonItem = .init(
-                    image: UIImage(systemName: "pencil"),
-                    style: .plain,
-                    target: self,
-                    action: #selector(editGoal))
-                
-                guard let items = tabbar.tabBar.items else { return }
-                
-                let images = ["applescript", "note.text"]
-                
-                for n in 0..<items.count {
-                    items[n].image = UIImage(systemName: images[n])
-                }
-                tabbar.modalPresentationStyle = .fullScreen
-                present(tabbar, animated: true)
-                
-            } else {
-                // if the goal contains more than just a name then all three views will be shown in the tabbar
-                tabbar.setViewControllers([goalVC, subGoalsVC, notesVC], animated: true)
-                
-                goalViewController.navigationItem.leftBarButtonItem = .init(
-                    barButtonSystemItem: .close,
-                    target: self,
-                    action: #selector(goHome))
-                
-                goalViewController.navigationItem.rightBarButtonItem = .init(
-                    image: UIImage(systemName: "pencil"),
-                    style: .plain,
-                    target: self,
-                    action: #selector(editGoal))
-                guard let items = tabbar.tabBar.items else { return }
-                let images = ["scroll.fill","applescript", "note.text"]
-                
-                for n in 0..<items.count {
-                    items[n].image = UIImage(systemName: images[n])
-                }
-                
-                tabbar.modalPresentationStyle = .fullScreen
-                present(tabbar, animated: true)
-            }
+            assignDataToVCs(index: indexPath.item)
+            configureTabBar(index: indexPath.item)
         }
     }
     
@@ -244,24 +202,21 @@ extension HomeVC: UICollectionViewDataSource, UICollectionViewDelegate {
         
         // passing the goal information so the users inputs are shown on the create goal screen
         let vc = CreateGoalVC(
-            goalType: "main",
-            action: "edit",
+            goalType: GoalType.main,
+            action: Action.edit,
             goalTFText: HomeVC.goals[currentIndex].name!,
             dateTFText: HomeVC.goals[currentIndex].date ?? "",
             currentNumTFText: startNumber,
             finalNumTFText: endNumber,
             buttonTitle: "Edit Goal",
             isGainGoal: HomeVC.goals[currentIndex].isGainGoal)
+        
         vc.isGoalComplete = HomeVC.goals[currentIndex].isGoalComplete
         let nav = UINavigationController(rootViewController: vc)
         nav.modalPresentationStyle = .fullScreen
         vc.navigationController?.navigationBar.prefersLargeTitles = true
         vc.navigationController?.navigationBar.topItem?.title = " Edit Main Goal"
         vc.navigationController?.isToolbarHidden = true
-//        vc.navigationItem.rightBarButtonItem = .init(
-//            barButtonSystemItem: .close,
-//            target: self,
-//            action: #selector(closeView))
         vc.currentGoalIndex = currentIndex
         vc.onlyGoal = true
         
@@ -272,7 +227,7 @@ extension HomeVC: UICollectionViewDataSource, UICollectionViewDelegate {
     
     @objc func closeView() {
         collectionView.reloadData()
-
+        
         dismiss(animated: true)
     }
     

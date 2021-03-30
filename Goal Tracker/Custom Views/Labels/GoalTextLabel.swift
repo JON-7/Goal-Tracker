@@ -33,7 +33,7 @@ class GoalTextLabel: UIView {
         containerView.clipsToBounds = true
         containerView.layer.cornerRadius = 10
         containerView.layer.maskedCorners = [.layerMinXMinYCorner, .layerMinXMaxYCorner]
-        containerView.backgroundColor = UIColor(named: "createGoalLabelColor")
+        containerView.backgroundColor = Colors.createGoalLabelColor
         
         label.translatesAutoresizingMaskIntoConstraints = false
         label.text = labelText

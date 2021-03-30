@@ -9,8 +9,8 @@ import UIKit
 
 class CreateGoalVC: UIViewController {
     
-    let goalType: String
-    let action: String
+    let goalType: GoalType
+    let action: Action
     let goalTFText: String?
     let dateTFText: String?
     let currentNumTFText: String?
@@ -20,6 +20,34 @@ class CreateGoalVC: UIViewController {
     var isGoalComplete: Bool!
     var onlyGoal: Bool?
     
+    let createGoalLabel = UILabel()
+    let goalTextfield = GoalTextField()
+    let goalLabel = GoalTextLabel(title: LabelTitle.goalLabelTitle)
+    
+    let dateTextfield = GoalTextField()
+    let dateLabel = GoalTextLabel(title: LabelTitle.dateLabelTitle)
+    var datePicker = UIDatePicker()
+    
+    let currentNumberLabel = GoalTextLabel(title: LabelTitle.currentNumLabelTitle)
+    let currentNumberTF = GoalTextField()
+    
+    let numberGoalLabel = GoalTextLabel(title: LabelTitle.numGoalLabelTitle)
+    let numberTextfield = GoalTextField()
+    
+    let colorLabel = GoalTextLabel(title: LabelTitle.colorLableTitle)
+    let colorButton = UIButton()
+    
+    let gainOrLoseLabel = GoalTextLabel(title: LabelTitle.gainLoseLabelTitle)
+    let gainButton = GainButton()
+    let loseButton = LoseButton()
+    let closeButton = UIButton()
+    
+    let createEditButton = GoalButton()
+    let deleteButton = GoalButton()
+    let trailingPadding = CGFloat(5)
+    let topPadding = CGFloat(19)
+    let heightMultiplier = CGFloat(0.06) //0.066
+    
     var currentGoalIndex: Int?
     var currentSubIndex: Int?
     
@@ -28,7 +56,7 @@ class CreateGoalVC: UIViewController {
     let defaultColors = [ #colorLiteral(red: 0.8870380521, green: 0.5724834204, blue: 0.9965009093, alpha: 1), #colorLiteral(red: 0.6950762272, green: 0.8662387729, blue: 0.5456559658, alpha: 1), #colorLiteral(red: 0.7887167931, green: 0.7959396243, blue: 0.9998794198, alpha: 1), #colorLiteral(red: 0.4156676531, green: 0.7495350242, blue: 0.9007849097, alpha: 1) ]
     private let colorPicker = UIColorPickerViewController()
     
-    required init(goalType: String, action: String, goalTFText: String, dateTFText: String?, currentNumTFText: String?, finalNumTFText: String?, buttonTitle: String, isGainGoal: Bool) {
+    required init(goalType: GoalType, action: Action, goalTFText: String, dateTFText: String?, currentNumTFText: String?, finalNumTFText: String?, buttonTitle: String, isGainGoal: Bool) {
         self.goalType = goalType
         self.action = action
         self.goalTFText = goalTFText
@@ -44,36 +72,13 @@ class CreateGoalVC: UIViewController {
         fatalError("init(coder:) has not been implemented")
     }
     
-    let createGoalLabel = UILabel()
-    public let goalTextfield = GoalTextField()
-    let goalLabel = GoalTextLabel(title: "Goal Name")
-    
-    let dateTextfield = GoalTextField()
-    let dateLabel = GoalTextLabel(title: "Goal Date")
-    var datePicker = UIDatePicker()
-    
-    let currentNumberLabel = GoalTextLabel(title: "Current Number")
-    let currentNumberTF = GoalTextField()
-    
-    let numberGoalLabel = GoalTextLabel(title: "Goal \nNumber")
-    let numberTextfield = GoalTextField()
-    
-    let colorLabel = GoalTextLabel(title: "Goal Color")
-    let colorButton = UIButton()
-    
-    let gainOrLoseLabel = GoalTextLabel(title: "Goal Type")
-    let gainButton = UIButton()
-    let loseButton = UIButton()
-    let closeButton = UIButton()
-    
-    let createEditButton = GoalButton()
-    let deleteButton = GoalButton()
-    let trailingPadding = CGFloat(5)
-    let topPadding = CGFloat(19)
-    let heightMultiplier = CGFloat(0.06) //0.066
-    
     override func viewDidLoad() {
         super.viewDidLoad()
+        configureDelegates()
+        configureView()
+    }
+    
+    func configureDelegates() {
         self.navigationController?.interactivePopGestureRecognizer?.delegate = nil
         self.navigationController?.interactivePopGestureRecognizer?.isEnabled = true
         view.backgroundColor = .secondarySystemBackground
@@ -82,16 +87,16 @@ class CreateGoalVC: UIViewController {
         currentNumberTF.delegate = self
         numberTextfield.delegate = self
         colorPicker.delegate = self
-        configureView()
     }
     
     func configureView() {
-        if goalType == "main" && dateTFText == "" && currentNumTFText == "" && finalNumTFText == "" {
+        if goalType == GoalType.main && dateTFText == "" && currentNumTFText == "" && finalNumTFText == "" {
             configLeftBarItem()
         }
         configureCloseButton()
         configureColor()
-        if action == "create" { configureMainLabel() }
+        if action == Action.create { configureMainLabel() }
+        configureCommonUIConstraints()
         configureGoalNameTF()
         configureDateTF()
         configureCurrentNumTF()
@@ -103,13 +108,91 @@ class CreateGoalVC: UIViewController {
         dismissKeyboardByTap()
     }
     
+    @objc func createGoal() {
+        let goalName = goalTextfield.text ?? ""
+        let goalDate = dateTextfield.text ?? ""
+        
+        let startNumText = currentNumberTF.text
+        let startNum = Double(startNumText!) ?? 0
+        
+        let endNumText = numberTextfield.text
+        let endNum = Double(endNumText!) ?? 0
+        
+        guard isAllDataValid() else { return }
+        // Create goal
+        if action == Action.create {
+            if goalType == GoalType.main {
+                let goal = DataManager.shared.goal(name: goalName, date: goalDate, startNum: startNum, endNum: endNum, cellColor: color!, index: HomeVC.goals.count, isGainGoal: gainButton.isSelected, isGoalComplete: false)
+                HomeVC.goals.append(goal)
+                DataManager.shared.save()
+                NotificationCenter.default.post(name: NSNotification.Name(NotificationName.reloadData), object: nil)
+                dismiss(animated: true)
+            } else if goalType == GoalType.sub {
+                let subGoal = DataManager.shared.subGoal(name: goalName, date: goalDate, startNum: startNum, endNum: endNum, cellColor: color!, index: SubGoalsVC.subGoals.count, isGainGoal: isGainGoal, isGoalComplete: false, goal: HomeVC.goals[currentGoalIndex!])
+                SubGoalsVC.subGoals.append(subGoal)
+                DataManager.shared.save()
+                NotificationCenter.default.post(name: NSNotification.Name(NotificationName.reloadData), object: nil)
+                dismiss(animated: true)
+            }
+        }
+        // Update goal
+        if action == Action.edit {
+            NotificationCenter.default.post(name: Notification.Name(NotificationName.updateUI), object: nil)
+            if goalType == GoalType.main {
+                HomeVC.goals[currentGoalIndex!].name = goalName
+                HomeVC.goals[currentGoalIndex!].date = goalDate
+                HomeVC.goals[currentGoalIndex!].startNum = startNum
+                HomeVC.goals[currentGoalIndex!].endNum = endNum
+                HomeVC.goals[currentGoalIndex!].cellColor = color
+                HomeVC.goals[currentGoalIndex!].isGainGoal = isGainGoal
+                DataManager.shared.save()
+                NotificationCenter.default.post(name: NSNotification.Name(NotificationName.reloadData), object: nil)
+                dismiss(animated: true)
+                
+            } else if goalType == GoalType.sub {
+                SubGoalsVC.subGoals[currentSubIndex!].name = goalName
+                SubGoalsVC.subGoals[currentSubIndex!].date = goalDate
+                SubGoalsVC.subGoals[currentSubIndex!].startNum = startNum
+                SubGoalsVC.subGoals[currentSubIndex!].endNum = endNum
+                SubGoalsVC.subGoals[currentSubIndex!].cellColor = color
+                SubGoalsVC.subGoals[currentSubIndex!].isGainGoal = isGainGoal
+                DataManager.shared.save()
+                NotificationCenter.default.post(name: NSNotification.Name(NotificationName.reloadData), object: nil)
+                dismiss(animated: true, completion: nil)
+            }
+        }
+    }
+    
+    func deleteGoal() {
+        if goalType == GoalType.main {
+            let goalToRemove = HomeVC.goals[currentGoalIndex!]
+            DataManager.shared.persistentContainer.viewContext.delete(goalToRemove)
+            DataManager.shared.save()
+            NotificationCenter.default.post(name: NSNotification.Name(NotificationName.reloadData), object: nil)
+            
+            let vc = UINavigationController(rootViewController: HomeVC())
+            vc.modalPresentationStyle = .fullScreen
+            present(vc, animated: true)
+        }
+        
+        if goalType == GoalType.sub {
+            let subGoalToRemove = SubGoalsVC.subGoals[currentSubIndex!]
+            DataManager.shared.persistentContainer.viewContext.delete(subGoalToRemove)
+            DataManager.shared.save()
+            SubGoalsVC.subGoals.remove(at: currentSubIndex!)
+            NotificationCenter.default.post(name: NSNotification.Name(NotificationName.reloadData), object: nil)
+            
+            self.presentingViewController?.presentingViewController?.dismiss(animated: true, completion: nil)
+        }
+    }
+    
     // getting the goal color to be used throughout the UI
     func configureColor() {
-        if action == "create" {
+        if action == Action.create {
             color = defaultColors.randomElement()
-        } else if goalType == "main" {
+        } else if goalType == GoalType.main {
             color = HomeVC.goals[currentGoalIndex!].cellColor
-        } else if goalType == "sub" {
+        } else if goalType == GoalType.sub {
             color = SubGoalsVC.subGoals[currentSubIndex!].cellColor
         } else {
             color = defaultColors.randomElement()
@@ -117,7 +200,7 @@ class CreateGoalVC: UIViewController {
     }
     
     func configureCloseButton() {
-        if action == "edit" {
+        if action == Action.edit {
             navigationItem.leftBarButtonItem = .init(barButtonSystemItem: .close, target: self, action: #selector(closeView))
         }
     }
@@ -127,7 +210,7 @@ class CreateGoalVC: UIViewController {
     }
     
     func configLeftBarItem() {
-        if onlyGoal ?? false && goalType == "main" {
+        if onlyGoal ?? false && goalType == GoalType.main {
             let goalComplete = HomeVC.goals[currentGoalIndex!].isGoalComplete
             var leftTitle = ""
             if goalComplete {
@@ -142,7 +225,7 @@ class CreateGoalVC: UIViewController {
     @objc func updateNav() {
         let goalComplete = HomeVC.goals[currentGoalIndex!].isGoalComplete
         if goalComplete {
-            let ac = UIAlertController(title: "Mark As Incomplete?", message: "Do you want to change the status of the goal to INCOMPLETE?", preferredStyle: .alert)
+            let ac = AC.markIncomplete
             let inComplete = UIAlertAction(title: "Change To Incomplete", style: .default) { _ in
                 HomeVC.goals[self.currentGoalIndex!].isGoalComplete = false
                 DataManager.shared.save()
@@ -157,7 +240,7 @@ class CreateGoalVC: UIViewController {
             present(ac, animated: true)
             
         } else if !goalComplete {
-            let ac = UIAlertController(title: "Mark As Complete?", message: "Do you want to mark this goal as COMPLETE?", preferredStyle: .alert)
+            let ac = AC.markComplete
             let complete = UIAlertAction(title: "Mark As Complete", style: .default) { _ in
                 HomeVC.goals[self.currentGoalIndex!].isGoalComplete = true
                 DataManager.shared.save()
@@ -175,9 +258,9 @@ class CreateGoalVC: UIViewController {
     
     public func configureMainLabel() {
         createGoalLabel.translatesAutoresizingMaskIntoConstraints = false
-        if goalType == "main" {
+        if goalType == GoalType.main {
             createGoalLabel.text = "Create Goal"
-        } else if goalType == "sub" {
+        } else if goalType == GoalType.sub {
             createGoalLabel.text = "Create Sub-Goal"
         }
         
@@ -193,104 +276,88 @@ class CreateGoalVC: UIViewController {
         ])
     }
     
+    func configureCommonUIConstraints() {
+        let labels = [goalLabel, dateLabel, currentNumberLabel, numberGoalLabel, colorLabel, gainOrLoseLabel]
+        let textFields = [goalTextfield, dateTextfield, currentNumberTF, numberTextfield, colorButton]
+        
+        for label in labels {
+            view.addSubview(label)
+            NSLayoutConstraint.activate([
+                label.containerView.leadingAnchor.constraint(equalTo: view.layoutMarginsGuide.leadingAnchor, constant: trailingPadding),
+                label.containerView.widthAnchor.constraint(equalToConstant: 100),
+                label.containerView.heightAnchor.constraint(equalToConstant: view.bounds.height * heightMultiplier),
+            ])
+        }
+        
+        for textField in textFields {
+            view.addSubview(textField)
+            NSLayoutConstraint.activate([
+                textField.trailingAnchor.constraint(equalTo: view.layoutMarginsGuide.trailingAnchor, constant: -trailingPadding),
+                textField.heightAnchor.constraint(equalToConstant: view.bounds.height * heightMultiplier),
+            ])
+        }
+    }
+    
     func configureGoalNameTF() {
-        view.addSubview(goalTextfield)
-        self.view.addSubview(goalLabel)
         goalTextfield.text = goalTFText
         
-        if action == "create" {
+        if action == Action.create {
             NSLayoutConstraint.activate([
                 goalLabel.containerView.topAnchor.constraint(equalTo: createGoalLabel.bottomAnchor, constant: -20),
-                goalLabel.containerView.leadingAnchor.constraint(equalTo: view.layoutMarginsGuide.leadingAnchor, constant: trailingPadding),
-                goalLabel.containerView.widthAnchor.constraint(equalToConstant: 100),
-                goalLabel.containerView.heightAnchor.constraint(equalToConstant: view.bounds.height * heightMultiplier),
-                
                 goalTextfield.topAnchor.constraint(equalTo: createGoalLabel.bottomAnchor, constant: -20),
                 goalTextfield.leadingAnchor.constraint(equalTo: goalLabel.containerView.trailingAnchor),
-                goalTextfield.trailingAnchor.constraint(equalTo: view.layoutMarginsGuide.trailingAnchor, constant: -trailingPadding),
-                goalTextfield.heightAnchor.constraint(equalToConstant: view.bounds.height * heightMultiplier)
             ])
         } else {
             NSLayoutConstraint.activate([
                 goalLabel.containerView.topAnchor.constraint(equalTo: view.layoutMarginsGuide.topAnchor),
-                goalLabel.containerView.leadingAnchor.constraint(equalTo: view.layoutMarginsGuide.leadingAnchor, constant: trailingPadding),
-                goalLabel.containerView.widthAnchor.constraint(equalToConstant: 100),
-                goalLabel.containerView.heightAnchor.constraint(equalToConstant: view.bounds.height * heightMultiplier),
-                
                 goalTextfield.topAnchor.constraint(equalTo: view.layoutMarginsGuide.topAnchor),
                 goalTextfield.leadingAnchor.constraint(equalTo: goalLabel.containerView.trailingAnchor),
-                goalTextfield.trailingAnchor.constraint(equalTo: view.layoutMarginsGuide.trailingAnchor, constant: -trailingPadding),
-                goalTextfield.heightAnchor.constraint(equalToConstant: view.bounds.height * heightMultiplier)
             ])
         }
     }
     
     func configureDateTF() {
-        view.addSubview(dateTextfield)
-        self.view.addSubview(dateLabel)
-        
         dateTextfield.text = dateTFText ?? ""
-        if action == "create" { dateTextfield.placeholder = "Optional" }
+        if action == Action.create { dateTextfield.placeholder = "Optional" }
         createDatePicker()
         
         NSLayoutConstraint.activate([
             dateLabel.containerView.topAnchor.constraint(equalTo: goalLabel.containerView.bottomAnchor, constant: view.bounds.height * heightMultiplier/2),
-            dateLabel.containerView.leadingAnchor.constraint(equalTo: view.layoutMarginsGuide.leadingAnchor, constant: trailingPadding),
-            dateLabel.containerView.widthAnchor.constraint(equalToConstant: 100),
-            dateLabel.containerView.heightAnchor.constraint(equalToConstant: view.bounds.height * heightMultiplier),
             
             dateTextfield.topAnchor.constraint(equalTo: goalLabel.containerView.bottomAnchor, constant: view.bounds.height * heightMultiplier/2),
             dateTextfield.leadingAnchor.constraint(equalTo: dateLabel.containerView.trailingAnchor),
-            dateTextfield.trailingAnchor.constraint(equalTo: view.layoutMarginsGuide.trailingAnchor, constant: -trailingPadding),
-            dateTextfield.heightAnchor.constraint(equalToConstant: view.bounds.height * heightMultiplier),
         ])
     }
     
     func configureCurrentNumTF() {
-        view.addSubview(currentNumberTF)
-        self.view.addSubview(currentNumberLabel)
         currentNumberTF.keyboardType = .decimalPad
         currentNumberTF.inputAccessoryView = configureDone()
         currentNumberTF.text = currentNumTFText ?? ""
-        if action == "create" { currentNumberTF.placeholder = "Optional" }
+        if action == Action.create { currentNumberTF.placeholder = "Optional" }
         
         NSLayoutConstraint.activate([
             currentNumberLabel.containerView.topAnchor.constraint(equalTo: dateLabel.containerView.bottomAnchor, constant: view.bounds.height * heightMultiplier/2),
-            currentNumberLabel.containerView.leadingAnchor.constraint(equalTo: view.layoutMarginsGuide.leadingAnchor, constant: trailingPadding),
-            currentNumberLabel.containerView.widthAnchor.constraint(equalToConstant: 100),
-            currentNumberLabel.containerView.heightAnchor.constraint(equalToConstant: view.bounds.height * heightMultiplier),
             
             currentNumberTF.topAnchor.constraint(equalTo: dateLabel.containerView.bottomAnchor, constant: view.bounds.height * heightMultiplier/2),
             currentNumberTF.leadingAnchor.constraint(equalTo: currentNumberLabel.containerView.trailingAnchor),
-            currentNumberTF.trailingAnchor.constraint(equalTo: view.layoutMarginsGuide.trailingAnchor, constant: -trailingPadding),
-            currentNumberTF.heightAnchor.constraint(equalToConstant: view.bounds.height * heightMultiplier)
         ])
     }
     
     func configureNumGoalTF() {
-        view.addSubview(numberTextfield)
-        self.view.addSubview(numberGoalLabel)
         numberTextfield.keyboardType = .decimalPad
         numberTextfield.inputAccessoryView = configureDone()
         numberTextfield.text = finalNumTFText ?? ""
-        if action == "create" { numberTextfield.placeholder = "Optional" }
+        if action == Action.create { numberTextfield.placeholder = "Optional" }
         
         NSLayoutConstraint.activate([
             numberGoalLabel.containerView.topAnchor.constraint(equalTo: currentNumberLabel.containerView.bottomAnchor, constant: view.bounds.height * heightMultiplier/2),
-            numberGoalLabel.containerView.leadingAnchor.constraint(equalTo: view.layoutMarginsGuide.leadingAnchor, constant: trailingPadding),
-            numberGoalLabel.containerView.widthAnchor.constraint(equalToConstant: 100),
-            numberGoalLabel.containerView.heightAnchor.constraint(equalToConstant: view.bounds.height * heightMultiplier),
             
             numberTextfield.topAnchor.constraint(equalTo: currentNumberLabel.containerView.bottomAnchor, constant: view.bounds.height * heightMultiplier/2),
             numberTextfield.leadingAnchor.constraint(equalTo: numberGoalLabel.containerView.trailingAnchor),
-            numberTextfield.trailingAnchor.constraint(equalTo: view.layoutMarginsGuide.trailingAnchor, constant: -trailingPadding),
-            numberTextfield.heightAnchor.constraint(equalToConstant: view.bounds.height * heightMultiplier)
         ])
     }
     
     func configureGoalColor() {
-        self.view.addSubview(colorLabel)
-        view.addSubview(colorButton)
         colorButton.translatesAutoresizingMaskIntoConstraints = false
         colorButton.clipsToBounds = true
         colorButton.layer.cornerRadius = 10
@@ -299,14 +366,9 @@ class CreateGoalVC: UIViewController {
         
         NSLayoutConstraint.activate([
             colorLabel.containerView.topAnchor.constraint(equalTo: numberGoalLabel.containerView.bottomAnchor, constant: view.bounds.height * heightMultiplier/2),
-            colorLabel.containerView.leadingAnchor.constraint(equalTo: view.layoutMarginsGuide.leadingAnchor, constant: trailingPadding),
-            colorLabel.containerView.widthAnchor.constraint(equalToConstant: 100),
-            colorLabel.containerView.heightAnchor.constraint(equalToConstant: view.bounds.height * heightMultiplier),
             
             colorButton.topAnchor.constraint(equalTo: numberGoalLabel.containerView.bottomAnchor, constant: view.bounds.height * heightMultiplier/2),
             colorButton.leadingAnchor.constraint(equalTo: colorLabel.containerView.trailingAnchor),
-            colorButton.trailingAnchor.constraint(equalTo: view.layoutMarginsGuide.trailingAnchor, constant: -trailingPadding),
-            colorButton.heightAnchor.constraint(equalToConstant: view.bounds.height * heightMultiplier)
         ])
         colorButton.addTarget(self, action: #selector(showColorPicker), for: .touchUpInside)
     }
@@ -319,12 +381,9 @@ class CreateGoalVC: UIViewController {
     }
     
     func configureGainOrLose() {
-        self.view.addSubview(gainOrLoseLabel)
         view.addSubview(gainButton)
-        gainButton.translatesAutoresizingMaskIntoConstraints = false
-        gainButton.setTitle("GAIN", for: .normal)
-        gainButton.setTitleColor(UIColor(named: "textColor"), for: .normal)
-    
+        view.addSubview(loseButton)
+        
         DispatchQueue.main.async { [self] in
             if isGainGoal {
                 gainButton.isSelected = true
@@ -340,19 +399,8 @@ class CreateGoalVC: UIViewController {
             }
         }
         
-        view.addSubview(loseButton)
-        loseButton.translatesAutoresizingMaskIntoConstraints = false
-        loseButton.backgroundColor = .tertiarySystemBackground
-        loseButton.setTitle("LOSE", for: .normal)
-        loseButton.setTitleColor(UIColor(named: "textColor"), for: .normal)
-        loseButton.layer.cornerRadius = 10
-        loseButton.layer.maskedCorners = [.layerMaxXMaxYCorner, .layerMaxXMinYCorner]
-        
         NSLayoutConstraint.activate([
             gainOrLoseLabel.containerView.topAnchor.constraint(equalTo: colorLabel.containerView.bottomAnchor, constant: view.bounds.height * heightMultiplier/2),
-            gainOrLoseLabel.containerView.leadingAnchor.constraint(equalTo: view.layoutMarginsGuide.leadingAnchor, constant: trailingPadding),
-            gainOrLoseLabel.containerView.widthAnchor.constraint(equalToConstant: 100),
-            gainOrLoseLabel.containerView.heightAnchor.constraint(equalToConstant: view.bounds.height * heightMultiplier),
             
             gainButton.topAnchor.constraint(equalTo: colorLabel.containerView.bottomAnchor, constant: view.bounds.height * heightMultiplier/2),
             gainButton.leadingAnchor.constraint(equalTo: gainOrLoseLabel.containerView.trailingAnchor),
@@ -364,7 +412,6 @@ class CreateGoalVC: UIViewController {
             loseButton.heightAnchor.constraint(equalToConstant: view.bounds.height * heightMultiplier),
             loseButton.widthAnchor.constraint(equalToConstant: CGFloat((view.bounds.width - 20 - 100 - 20)) / 2)
         ])
-        
         gainButton.addTarget(self, action: #selector(gainPressed), for: .touchUpInside)
         loseButton.addTarget(self, action: #selector(losePressed), for: .touchUpInside)
     }
@@ -395,15 +442,14 @@ class CreateGoalVC: UIViewController {
             createEditButton.widthAnchor.constraint(equalTo: view.layoutMarginsGuide.widthAnchor, multiplier: 0.90),
             createEditButton.heightAnchor.constraint(equalToConstant: view.bounds.height * 0.10)
         ])
-        
         createEditButton.addTarget(self, action: #selector(createGoal), for: .touchUpInside)
     }
     
     func configureDeleteButton() {
-        if action == "edit" {
+        if action == Action.edit {
             view.addSubview(deleteButton)
-            if goalType == "main" { deleteButton.setTitle("Delete Goal", for: .normal)}
-            if goalType == "sub" { deleteButton.setTitle("Delete Sub-Goal", for: .normal)}
+            if goalType == GoalType.main { deleteButton.setTitle("Delete Goal", for: .normal)}
+            if goalType == GoalType.sub { deleteButton.setTitle("Delete Sub-Goal", for: .normal)}
             
             deleteButton.backgroundColor = .systemRed
             deleteButton.setTitleColor(.white, for: .normal)
@@ -414,15 +460,12 @@ class CreateGoalVC: UIViewController {
                 deleteButton.widthAnchor.constraint(equalTo: view.layoutMarginsGuide.widthAnchor, multiplier: 0.90),
                 deleteButton.heightAnchor.constraint(equalToConstant: view.bounds.height * 0.10)
             ])
-            
             deleteButton.addTarget(self, action: #selector(deleteWarning), for: .touchUpInside)
         }
     }
     
     @objc func deleteWarning() {
-        let ac = UIAlertController(title: "Delete Goal",
-                                   message: "Are you sure you want to delete this goal?",
-                                   preferredStyle: .alert)
+        let ac = AC.deleteGoal
         let delete = UIAlertAction(title: "Delete", style: .destructive) { _ in
             self.deleteGoal()
         }
@@ -431,189 +474,4 @@ class CreateGoalVC: UIViewController {
         ac.addAction(cancel)
         present(ac, animated: true)
     }
-    
-    func deleteGoal() {
-        if goalType == "main" {
-            let goalToRemove = HomeVC.goals[currentGoalIndex!]
-            DataManager.shared.persistentContainer.viewContext.delete(goalToRemove)
-            DataManager.shared.save()
-            NotificationCenter.default.post(name: NSNotification.Name(rawValue: "newDataNotif"), object: nil)
-            
-            let vc = UINavigationController(rootViewController: HomeVC())
-            vc.modalPresentationStyle = .fullScreen
-            present(vc, animated: true)
-        }
-        
-        if goalType == "sub" {
-            let subGoalToRemove = SubGoalsVC.subGoals[currentSubIndex!]
-            DataManager.shared.persistentContainer.viewContext.delete(subGoalToRemove)
-            DataManager.shared.save()
-            SubGoalsVC.subGoals.remove(at: currentSubIndex!)
-            NotificationCenter.default.post(name: NSNotification.Name(rawValue: "newDataNotif"), object: nil)
-            
-            self.presentingViewController?.presentingViewController?.dismiss(animated: true, completion: nil)
-        }
-    }
-    
-    @objc func createGoal() {
-        let goalName = goalTextfield.text ?? ""
-        let goalDate = dateTextfield.text ?? ""
-        
-        let startNumText = currentNumberTF.text
-        let startNum = Double(startNumText!) ?? 0
-        
-        let endNumText = numberTextfield.text
-        let endNum = Double(endNumText!) ?? 0
-        var checksPassed = 0
-        
-        func displayTFMessage(title: String, message: String) {
-            let ac = UIAlertController(title: title, message: message, preferredStyle: .alert)
-            let action = UIAlertAction(title: "Continue", style: .default)
-            ac.addAction(action)
-            present(ac, animated: true)
-        }
-        
-        if goalName == "" {
-            displayTFMessage(title: "Please Enter a Goal Name",
-                             message: "")
-        } else {
-            checksPassed += 1
-        }
-        
-        if startNumText == "" && endNumText != "" {
-            displayTFMessage(title: "Enter Starting Number",
-                             message: "Please enter a starting number or remove the ending number")
-        } else {
-            checksPassed += 1
-        }
-        
-        if startNumText != "" && endNumText == "" {
-            displayTFMessage(title: "Enter Final Number Goal",
-                             message: "Please enter your final numeric goal or remove the starting number")
-        } else {
-            checksPassed += 1
-        }
-        
-        if checksPassed == 3 {
-            // Create goal
-            if action == "create" {
-                if goalType == "main" {
-                    let goal = DataManager.shared.goal(name: goalName, date: goalDate, startNum: startNum, endNum: endNum, cellColor: color!, index: HomeVC.goals.count, isGainGoal: gainButton.isSelected, isGoalComplete: false)
-                    HomeVC.goals.append(goal)
-                    DataManager.shared.save()
-                    NotificationCenter.default.post(name: NSNotification.Name(rawValue: "newDataNotif"), object: nil)
-                    dismiss(animated: true)
-                } else if goalType == "sub" {
-                    let subGoal = DataManager.shared.subGoal(name: goalName, date: goalDate, startNum: startNum, endNum: endNum, cellColor: color!, index: SubGoalsVC.subGoals.count, isGainGoal: isGainGoal, isGoalComplete: false, goal: HomeVC.goals[currentGoalIndex!])
-                    SubGoalsVC.subGoals.append(subGoal)
-                    DataManager.shared.save()
-                    NotificationCenter.default.post(name: NSNotification.Name(rawValue: "newDataNotif"), object: nil)
-                    dismiss(animated: true)
-                }
-            }
-            // Update goal
-            if action == "edit" {
-                NotificationCenter.default.post(name: Notification.Name("updateGoalUI"), object: nil)
-                if goalType == "main" {
-                    HomeVC.goals[currentGoalIndex!].name = goalName
-                    HomeVC.goals[currentGoalIndex!].date = goalDate
-                    HomeVC.goals[currentGoalIndex!].startNum = startNum
-                    HomeVC.goals[currentGoalIndex!].endNum = endNum
-                    HomeVC.goals[currentGoalIndex!].cellColor = color
-                    HomeVC.goals[currentGoalIndex!].isGainGoal = isGainGoal
-                    DataManager.shared.save()
-                    NotificationCenter.default.post(name: NSNotification.Name("newDataNotif"), object: nil)
-                    dismiss(animated: true)
-                    
-                } else if goalType == "sub" {
-                    SubGoalsVC.subGoals[currentSubIndex!].name = goalName
-                    SubGoalsVC.subGoals[currentSubIndex!].date = goalDate
-                    SubGoalsVC.subGoals[currentSubIndex!].startNum = startNum
-                    SubGoalsVC.subGoals[currentSubIndex!].endNum = endNum
-                    SubGoalsVC.subGoals[currentSubIndex!].cellColor = color
-                    SubGoalsVC.subGoals[currentSubIndex!].isGainGoal = isGainGoal
-                    DataManager.shared.save()
-                    NotificationCenter.default.post(name: NSNotification.Name("newDataNotif"), object: nil)
-                    dismiss(animated: true, completion: nil)
-                }
-            }
-        }
-    }
-    
-    func createDatePicker() {
-        datePicker = UIDatePicker.init(frame: CGRect(x: 0, y: 0, width: self.view.bounds.width, height: 75))
-        datePicker.datePickerMode = .date
-        datePicker.minimumDate = Date()
-        datePicker.addTarget(self, action: #selector(dateChanged), for: .allEvents)
-        
-        let toolbar = UIToolbar.init(frame: CGRect(x: 0, y: 0, width: self.view.bounds.width, height: 44))
-        let makeSpaceBtn = UIBarButtonItem(barButtonSystemItem: UIBarButtonItem.SystemItem.flexibleSpace, target: nil, action: nil)
-        let removeBtn = UIBarButtonItem(title: "Remove", style: .plain, target: self, action: #selector(removeDate))
-        let doneBtn = UIBarButtonItem(barButtonSystemItem: UIBarButtonItem.SystemItem.done, target: self, action: #selector(dismissWithDone))
-        toolbar.setItems([removeBtn, makeSpaceBtn, doneBtn], animated: true)
-        
-        dateTextfield.inputAccessoryView = toolbar
-        dateTextfield.inputView = datePicker
-    }
-    
-    func dismissKeyboardByTap() {
-        let tap = UITapGestureRecognizer(target: self.view, action: #selector(UIView.endEditing))
-        view.addGestureRecognizer(tap)
-    }
-    
-    @objc func removeDate() {
-        DispatchQueue.main.async {
-            self.dateTextfield.text = ""
-        }
-    }
-    
-    @objc func dateChanged() {
-        let dateFormat = DateFormatter()
-        dateFormat.dateStyle = .medium
-        self.dateTextfield.text = dateFormat.string(from: datePicker.date)
-    }
-    
-    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
-        goalTextfield.resignFirstResponder()
-        dateTextfield.resignFirstResponder()
-        return true
-    }
-    
-    func configureDone() -> UIToolbar {
-        let toolBar = UIToolbar()
-        toolBar.sizeToFit()
-        let makeSpaceBtn = UIBarButtonItem(barButtonSystemItem: UIBarButtonItem.SystemItem.flexibleSpace, target: nil, action: nil)
-        let button = UIBarButtonItem(title: "Done", style: .plain, target: self,
-                                     action: #selector(dismissWithDone))
-        toolBar.setItems([makeSpaceBtn, button], animated: true)
-        toolBar.isUserInteractionEnabled = true
-        return toolBar
-    }
-    @objc func dismissWithDone() {
-        view.endEditing(true)
-    }
-}
-
-extension CreateGoalVC: UIColorPickerViewControllerDelegate {
-    func colorPickerViewControllerDidSelectColor(_ viewController: UIColorPickerViewController) {
-        color = viewController.selectedColor
-        colorButton.backgroundColor = color
-    }
-    
-    func colorPickerViewControllerDidFinish(_ viewController: UIColorPickerViewController) {
-        DispatchQueue.main.async {
-            if self.gainButton.isSelected {
-                self.gainButton.backgroundColor = self.color
-            } else if self.loseButton.isSelected {
-                self.loseButton.backgroundColor = self.color
-            }
-        }
-    }
-}
-
-extension UIViewController: UITextFieldDelegate, UINavigationControllerDelegate {
-    var topbarHeight: CGFloat {
-            return (view.window?.windowScene?.statusBarManager?.statusBarFrame.height ?? 0.0) +
-                (self.navigationController?.navigationBar.frame.height ?? 0.0)
-        }
 }

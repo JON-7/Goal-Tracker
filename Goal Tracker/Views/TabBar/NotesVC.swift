@@ -27,7 +27,7 @@ class NotesVC: UIViewController {
         tableView.reloadData()
         configureTableView()
         configureNav()
-        view.backgroundColor = UIColor(named: "mainBackgroundColor")
+        view.backgroundColor = Colors.mainBackgroundColor
         
         if let allNotes = goal?.notes?.allObjects as? [Note] {
             NotesVC.notes = allNotes
@@ -35,8 +35,8 @@ class NotesVC: UIViewController {
     }
     
     func configureTableView() {
-        tableView.register(TableViewCell.self, forCellReuseIdentifier: "tableCell")
-        tableView.backgroundColor = UIColor(named: "mainBackgroundColor")
+        tableView.register(TableViewCell.self, forCellReuseIdentifier: TableViewCell.reuseID)
+        tableView.backgroundColor = Colors.mainBackgroundColor
         tableView.dataSource = self
         tableView.delegate = self
         tableView.rowHeight = 100
@@ -62,13 +62,12 @@ class NotesVC: UIViewController {
     }
     
     @objc func addNote() {
-        let vc = CreateNoteVC(action: "", noteTitle: "", noteText: "")
-        vc.view.backgroundColor = UIColor(named: "mainBackgroundColor")
+        let vc = CreateNoteVC(action: Action.none, noteTitle: "", noteText: "")
+        vc.view.backgroundColor = Colors.mainBackgroundColor
         vc.goalIndex = goalIndex
         vc.modalPresentationStyle = .fullScreen
         navigationController?.pushViewController(vc, animated: true)
     }
-    
 }
 
 extension NotesVC: UITableViewDelegate, UITableViewDataSource {
@@ -77,9 +76,9 @@ extension NotesVC: UITableViewDelegate, UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "tableCell") as! TableViewCell
+        let cell = tableView.dequeueReusableCell(withIdentifier: TableViewCell.reuseID) as! TableViewCell
         cell.titleLabel.text = NotesVC.notes[indexPath.row].title
-        cell.backgroundColor = UIColor(named: "mainBackgroundColor")
+        cell.backgroundColor = Colors.mainBackgroundColor
         cell.dateLabel.text = NotesVC.notes[indexPath.row].lastEdited
         cell.notePreview.text = NotesVC.notes[indexPath.row].noteText
         
@@ -90,30 +89,22 @@ extension NotesVC: UITableViewDelegate, UITableViewDataSource {
         let vc = ViewNoteVC()
         vc.currentIndex = indexPath.row
         vc.navigationItem.rightBarButtonItem = .init(
-            image: UIImage(systemName: "pencil"),
+            image: Images.pencil,
             style: .plain,
             target: self,
             action: #selector(editNote))
         
-        //let navVC = UINavigationController(rootViewController: vc)
-        vc.view.backgroundColor = UIColor(named: "mainBackgroundColor")
-        //navVC.modalPresentationStyle = .fullScreen
+        vc.view.backgroundColor = Colors.mainBackgroundColor
         self.noteIndex = indexPath.row
-        //present(navVC, animated: true)
         vc.modalPresentationStyle = .fullScreen
         navigationController?.pushViewController(vc, animated: true)
     }
     
     @objc func editNote() {
-        let vc = CreateNoteVC(action: "edit", noteTitle: NotesVC.notes[noteIndex!].title ?? "", noteText: NotesVC.notes[noteIndex!].noteText ?? "")
+        let vc = CreateNoteVC(action: Action.edit, noteTitle: NotesVC.notes[noteIndex!].title ?? "", noteText: NotesVC.notes[noteIndex!].noteText ?? "")
         vc.goalIndex = goalIndex
         vc.noteIndex = noteIndex
-        vc.view.backgroundColor = UIColor(named: "mainBackgroundColor")
-//        let navVC = UINavigationController(rootViewController: vc)
-//        navVC.modalPresentationStyle = .fullScreen
-//        DispatchQueue.main.async {
-//            self.getTopMostViewController()?.present(navVC, animated: true, completion: nil)
-//        }
+        vc.view.backgroundColor = Colors.mainBackgroundColor
         vc.modalPresentationStyle = .fullScreen
         navigationController?.pushViewController(vc, animated: true)
     }
@@ -146,4 +137,3 @@ extension NotesVC: UITableViewDelegate, UITableViewDataSource {
         }
     }
 }
-            

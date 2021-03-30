@@ -19,7 +19,7 @@ class ViewSubGoalVC: UIViewController {
     var subgoalColor: UIColor!
     var isGainGoal: Bool!
     var isComplete: Bool!
-    let goalVC = GoalVC(goalType: "sub")
+    let goalVC = GoalVC(goalType: GoalType.sub)
     
     override func viewDidLoad() {
         

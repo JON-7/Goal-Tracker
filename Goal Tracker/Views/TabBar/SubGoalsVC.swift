@@ -35,8 +35,9 @@ class SubGoalsVC: UIViewController {
     }
     
     override func viewWillAppear(_ animated: Bool) {
+        self.navigationController?.navigationBar.prefersLargeTitles = true
         DispatchQueue.main.async {
-            NotificationCenter.default.addObserver(self, selector: #selector(self.refresh), name: NSNotification.Name(rawValue: "newDataNotif"), object: nil)
+            NotificationCenter.default.addObserver(self, selector: #selector(self.refresh), name: NSNotification.Name(NotificationName.reloadData), object: nil)
             self.collectionView!.collectionViewLayout.invalidateLayout()
             self.collectionView!.layoutSubviews()
             self.collectionView.showsVerticalScrollIndicator = false
@@ -50,14 +51,14 @@ class SubGoalsVC: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        NotificationCenter.default.addObserver(self, selector: #selector(updateUI), name: Notification.Name("updateGoalUI"), object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(updateUI), name: Notification.Name(NotificationName.updateUI), object: nil)
         collectionView!.reloadData()
-        collectionView.backgroundColor = UIColor(named: "mainBackgroundColor")
+        collectionView.backgroundColor = Colors.mainBackgroundColor
         //self.parent?.title = "Sub-Goals"
         navigationController?.navigationBar.prefersLargeTitles = true
         collectionView.dataSource = self
         collectionView.delegate = self
-        collectionView.register(CollectionViewCell.self, forCellWithReuseIdentifier: "MySubCell")
+        collectionView.register(CollectionViewCell.self, forCellWithReuseIdentifier: CollectionViewCell.reuseID)
         if let allSubGoals = goal?.subGoals?.allObjects as? [SubGoal] {
             SubGoalsVC.subGoals = allSubGoals
         }
@@ -107,34 +108,12 @@ extension SubGoalsVC: UICollectionViewDataSource, UICollectionViewDelegate {
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "MySubCell", for: indexPath) as! CollectionViewCell
-        
-        cell.clipsToBounds = true
-        cell.textLabel.numberOfLines = 1
-        cell.textLabel.font = .systemFont(ofSize: 30, weight: .semibold)
-        cell.layer.cornerRadius = 20
-        
-        if indexPath.item < SubGoalsVC.subGoals.count{
-            cell.layer.cornerRadius = 20
-            cell.textLabel.backgroundColor = SubGoalsVC.subGoals[indexPath.row].cellColor
-            cell.textLabel.textColor = .white
-            cell.textLabel.numberOfLines = 2
-            if SubGoalsVC.subGoals[indexPath.row].isGoalComplete {
-                let attributeString: NSMutableAttributedString = NSMutableAttributedString(string: SubGoalsVC.subGoals[indexPath.row].name ?? "Name not found")
-                    attributeString.addAttribute(NSAttributedString.Key.strikethroughStyle, value: 2, range: NSMakeRange(0, attributeString.length))
-                cell.textLabel.attributedText = attributeString
-            } else {
-                let attributeString: NSMutableAttributedString = NSMutableAttributedString(string: SubGoalsVC.subGoals[indexPath.row].name ?? "Name not found")
-                cell.textLabel.attributedText = attributeString
-            }
-        }
-        
-        if indexPath.item == SubGoalsVC.subGoals.count {
-            let attributeString: NSMutableAttributedString = NSMutableAttributedString(string: "Create Sub-Goal")
-            cell.textLabel.attributedText = attributeString
-            cell.layer.cornerRadius = 45
-            cell.textLabel.backgroundColor = .white
-            cell.textLabel.textColor = .black
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: CollectionViewCell.reuseID, for: indexPath) as! CollectionViewCell
+        // If the cell is not the last cell (create goal cell) then give it a title and cell color
+        if indexPath.item < SubGoalsVC.subGoals.count {
+            cell.createMainCell(cellTitle: SubGoalsVC.subGoals[indexPath.row].name!, cellColor: SubGoalsVC.subGoals[indexPath.row].cellColor!, isComplete: SubGoalsVC.subGoals[indexPath.row].isGoalComplete)
+        } else {
+            cell.createGoalCell()
         }
         return cell
     }
@@ -142,8 +121,8 @@ extension SubGoalsVC: UICollectionViewDataSource, UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         
         if indexPath.item == SubGoalsVC.subGoals.count {
-            let vc = CreateGoalVC(goalType: "sub",
-                                  action: "create",
+            let vc = CreateGoalVC(goalType: GoalType.sub,
+                                  action: Action.create,
                                   goalTFText: "",
                                   dateTFText: "",
                                   currentNumTFText: "",
@@ -169,13 +148,13 @@ extension SubGoalsVC: UICollectionViewDataSource, UICollectionViewDelegate {
             
             //let navVC = UINavigationController(rootViewController: vc)
             vc.navigationItem.leftBarButtonItem = .init(
-                image: UIImage(systemName: "arrow.backward"),
+                image: Images.backArrow,
                 style: .plain,
                 target: self,
                 action: #selector(goBack))
             
             vc.navigationItem.rightBarButtonItem = .init(
-                image: UIImage(systemName: "pencil"),
+                image: Images.pencil,
                 style: .plain,
                 target: self,
                 action: #selector(editGoal))
@@ -200,8 +179,8 @@ extension SubGoalsVC: UICollectionViewDataSource, UICollectionViewDelegate {
         }
         
         let vc = CreateGoalVC(
-            goalType: "sub",
-            action: "edit",
+            goalType: GoalType.sub,
+            action: Action.edit,
             goalTFText: SubGoalsVC.subGoals[currentIndex].name ?? "",
             dateTFText: SubGoalsVC.subGoals[currentIndex].date ?? "",
             currentNumTFText: start,

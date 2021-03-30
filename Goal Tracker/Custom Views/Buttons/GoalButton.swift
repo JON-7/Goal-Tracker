@@ -20,7 +20,7 @@ class GoalButton: UIButton {
     
     private func configure() {
         translatesAutoresizingMaskIntoConstraints = false
-        backgroundColor = UIColor(named: "goalActionBtnColor")
+        backgroundColor = Colors.goalActionBtnColor
         setTitleColor(.black, for: .normal)
         titleLabel?.font = .systemFont(ofSize: 30, weight: .semibold)
         clipsToBounds = true

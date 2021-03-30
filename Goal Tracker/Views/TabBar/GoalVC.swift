@@ -25,11 +25,11 @@ class GoalVC: UIViewController {
     
     var goalColor: UIColor!
     let label = UILabel()
-    var goalType: String!
+    var goalType: GoalType
     var progressPercent: Double?
     var countdown = DaysRemainingView(dateString: "")
     
-    required init(goalType: String) {
+    required init(goalType: GoalType) {
         self.goalType = goalType
         super.init(nibName: nil, bundle: nil)
     }
@@ -38,13 +38,17 @@ class GoalVC: UIViewController {
         fatalError("init(coder:) has not been implemented")
     }
     
+    override func viewWillAppear(_ animated: Bool) {
+        navigationController?.navigationBar.prefersLargeTitles = true
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         self.view = view
-        NotificationCenter.default.addObserver(self, selector: #selector(updateUI), name: Notification.Name("updateGoalUI"), object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(updateUI), name: Notification.Name(NotificationName.updateUI), object: nil)
         self.navigationController?.interactivePopGestureRecognizer?.delegate = nil
         self.navigationController?.interactivePopGestureRecognizer?.isEnabled = true
-        view.backgroundColor = UIColor(named: "mainBackgroundColor")
+        view.backgroundColor = Colors.mainBackgroundColor
         navigationController?.navigationBar.prefersLargeTitles = true
         countdown = DaysRemainingView(dateString: date!)
         configureView()
@@ -53,7 +57,7 @@ class GoalVC: UIViewController {
     @objc func updateUI() {
         DispatchQueue.main.async { [self] in
             configLabel()
-            if goalType == "sub" {
+            if goalType == GoalType.sub {
                 goalName = SubGoalsVC.subGoals[currentGoalIndex!].name
                 date = SubGoalsVC.subGoals[currentGoalIndex!].date
                 currentNum = SubGoalsVC.subGoals[currentGoalIndex!].startNum
@@ -92,7 +96,7 @@ class GoalVC: UIViewController {
     func configLabel() {
         view.addSubview(label)
         label.translatesAutoresizingMaskIntoConstraints = false
-        label.backgroundColor = UIColor(named: "mainBackgroundColor")
+        label.backgroundColor = Colors.mainBackgroundColor
         
         NSLayoutConstraint.activate([
             label.topAnchor.constraint(equalTo: view.topAnchor),
@@ -110,7 +114,7 @@ class GoalVC: UIViewController {
         messageLabel.numberOfLines = 3
         messageLabel.font = .preferredFont(forTextStyle: .headline)
         messageLabel.font = .systemFont(ofSize: 40)
-        if goalType ==  "main" {
+        if goalType ==  GoalType.main {
             navigationController?.navigationBar.topItem?.title = "Goal"
         } else {
             self.parent?.title = "Goal"
@@ -133,9 +137,9 @@ class GoalVC: UIViewController {
         if isComplete {
             completeButton.isSelected = true
             completeButton.backgroundColor = .systemGreen
-            if goalType == "main" {
+            if goalType == GoalType.main {
                 completeButton.setTitle("Goal Complete", for: .selected)
-            } else if goalType == "sub" {
+            } else if goalType == GoalType.sub {
                 completeButton.setTitle("Sub-Goal Complete", for: .selected)
             }
             completeButton.titleLabel?.font = .boldSystemFont(ofSize: 20)
@@ -160,10 +164,10 @@ class GoalVC: UIViewController {
                 completeButton.isSelected = false
                 completeButton.backgroundColor = .lightGray
                 isComplete = false
-                if goalType == "main" {
+                if goalType == GoalType.main {
                     HomeVC.goals[currentGoalIndex!].isGoalComplete = false
                     DataManager.shared.save()
-                } else if goalType == "sub" {
+                } else if goalType == GoalType.sub {
                     SubGoalsVC.subGoals[currentGoalIndex!].isGoalComplete = false
                     DataManager.shared.save()
                 }
@@ -179,10 +183,10 @@ class GoalVC: UIViewController {
                 self.completeButton.setTitle("Sub-Goal Complete", for: .selected)
                 self.completeButton.titleLabel?.font = .boldSystemFont(ofSize: 20)
                 self.isComplete = true
-                if goalType == "main" {
+                if goalType == GoalType.main {
                     HomeVC.goals[currentGoalIndex!].isGoalComplete = true
                     DataManager.shared.save()
-                } else if goalType == "sub" {
+                } else if goalType == GoalType.sub {
                     SubGoalsVC.subGoals[currentGoalIndex!].isGoalComplete = true
                     DataManager.shared.save()
                 }
@@ -214,7 +218,7 @@ class GoalVC: UIViewController {
         topCountdownLabel.font = .monospacedSystemFont(ofSize: 25, weight: .thin)
         topCountdownLabel.clipsToBounds = true
         topCountdownLabel.layer.cornerRadius = 10
-        topCountdownLabel.backgroundColor = UIColor(named: "countdownColor")
+        topCountdownLabel.backgroundColor = Colors.countdownColor
         
         view.addSubview(bottomCountdownLabel)
         bottomCountdownLabel.translatesAutoresizingMaskIntoConstraints = false
@@ -223,14 +227,14 @@ class GoalVC: UIViewController {
         bottomCountdownLabel.text = "Time Remaining"
         
         if isComplete {
-            if goalType == "main" {
+            if goalType == GoalType.main {
                 navigationController?.navigationBar.topItem?.title = "Goal Complete"
             } else {
                 self.parent?.title = "Goal Complete"
             }
-            bottomCountdownLabel.textColor = UIColor(named: "textColor")
+            bottomCountdownLabel.textColor = Colors.textColor
         } else {
-            if goalType == "main" {
+            if goalType == GoalType.main {
                 navigationController?.navigationBar.topItem?.title = date
             } else {
                 self.parent?.title = date
@@ -246,7 +250,6 @@ class GoalVC: UIViewController {
             topCountdownLabel.leadingAnchor.constraint(equalTo: view.layoutMarginsGuide.leadingAnchor),
             topCountdownLabel.trailingAnchor.constraint(equalTo: view.layoutMarginsGuide.trailingAnchor),
             
-            //bottomCountdownLabel.topAnchor.constraint(equalTo: view.topAnchor, constant: (view.bounds.height/2) - 60),
             bottomCountdownLabel.topAnchor.constraint(equalTo: topCountdownLabel.bottomAnchor, constant: 50),
             bottomCountdownLabel.leadingAnchor.constraint(equalTo: view.layoutMarginsGuide.leadingAnchor),
             bottomCountdownLabel.trailingAnchor.constraint(equalTo: view.layoutMarginsGuide.trailingAnchor),
@@ -260,7 +263,7 @@ class GoalVC: UIViewController {
     
     //MARK: Configure the progress bar, message label, and remaining label
     public func configureProgress() {
-        if goalType == "main" {
+        if goalType == GoalType.main {
             navigationController?.navigationBar.topItem?.title = "Progress"
         } else {
             self.parent?.title = "Progress"
@@ -271,7 +274,7 @@ class GoalVC: UIViewController {
         progress.translatesAutoresizingMaskIntoConstraints = false
         progress.shape.strokeColor = goalColor.cgColor
         
-        if goalType == "main" {
+        if goalType == GoalType.main {
             if progressPercent == 100.0 {
                 HomeVC.goals[currentGoalIndex!].isGoalComplete = true
                 DataManager.shared.save()
@@ -279,7 +282,7 @@ class GoalVC: UIViewController {
                 HomeVC.goals[currentGoalIndex!].isGoalComplete = false
                 DataManager.shared.save()
             }
-        } else if goalType == "sub" {
+        } else if goalType == GoalType.main {
             if progressPercent == 100.0 {
                 SubGoalsVC.subGoals[currentGoalIndex!].isGoalComplete = true
                 DataManager.shared.save()
@@ -358,8 +361,8 @@ class GoalVC: UIViewController {
         progress.shape.strokeColor = goalColor.cgColor
         progress.translatesAutoresizingMaskIntoConstraints = false
         self.view.addSubview(progress)
-
-        if goalType == "main" {
+        
+        if goalType == GoalType.main {
             navigationController?.navigationBar.topItem?.title = "Progress"
         } else {
             self.parent?.title = "Progress"
@@ -414,19 +417,5 @@ class GoalVC: UIViewController {
 extension Double {
     var formatToString: String {
         return self.truncatingRemainder(dividingBy: 1) == 0 ? String(format: "%.0f", self) : String(format: "%.1f", self)
-    }
-}
-
-extension UIButton {
-    func pulsate() {
-        let pulse = CASpringAnimation(keyPath: "transform.scale")
-        pulse.duration = 0.15
-        pulse.fromValue = 0.95
-        pulse.toValue = 1
-        pulse.autoreverses = false
-        pulse.repeatCount = 0
-        pulse.initialVelocity = 0.9
-        pulse.damping = 1.0
-        layer.add(pulse, forKey: nil)
     }
 }

@@ -35,6 +35,13 @@
 		FCC9382225DB007E00A5EAAB /* NotesVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = FCC9382125DB007E00A5EAAB /* NotesVC.swift */; };
 		FCC9382625DB0F5A00A5EAAB /* CreateGoalVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = FCC9382525DB0F5A00A5EAAB /* CreateGoalVC.swift */; };
 		FCC9385E25DB998500A5EAAB /* ViewSubGoalVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = FCC9385D25DB998500A5EAAB /* ViewSubGoalVC.swift */; };
+		FCEA72BA2612BCA20023592B /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = FCEA72B92612BCA20023592B /* Constants.swift */; };
+		FCEA72C92612CC670023592B /* UIView+Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = FCEA72C82612CC670023592B /* UIView+Ext.swift */; };
+		FCEA72CC2612CC7A0023592B /* UIViewController+Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = FCEA72CB2612CC7A0023592B /* UIViewController+Ext.swift */; };
+		FCEA72CF2612CC8E0023592B /* CreateGoal+Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = FCEA72CE2612CC8E0023592B /* CreateGoal+Ext.swift */; };
+		FCEA72D22612D22E0023592B /* GainButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = FCEA72D12612D22E0023592B /* GainButton.swift */; };
+		FCEA72D52612D2370023592B /* LoseButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = FCEA72D42612D2370023592B /* LoseButton.swift */; };
+		FCEA72DC2612D8790023592B /* UIButton+Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = FCEA72DB2612D8790023592B /* UIButton+Ext.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -68,6 +75,13 @@
 		FCC9382125DB007E00A5EAAB /* NotesVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotesVC.swift; sourceTree = "<group>"; };
 		FCC9382525DB0F5A00A5EAAB /* CreateGoalVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateGoalVC.swift; sourceTree = "<group>"; };
 		FCC9385D25DB998500A5EAAB /* ViewSubGoalVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewSubGoalVC.swift; sourceTree = "<group>"; };
+		FCEA72B92612BCA20023592B /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
+		FCEA72C82612CC670023592B /* UIView+Ext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIView+Ext.swift"; sourceTree = "<group>"; };
+		FCEA72CB2612CC7A0023592B /* UIViewController+Ext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIViewController+Ext.swift"; sourceTree = "<group>"; };
+		FCEA72CE2612CC8E0023592B /* CreateGoal+Ext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CreateGoal+Ext.swift"; sourceTree = "<group>"; };
+		FCEA72D12612D22E0023592B /* GainButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GainButton.swift; sourceTree = "<group>"; };
+		FCEA72D42612D2370023592B /* LoseButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoseButton.swift; sourceTree = "<group>"; };
+		FCEA72DB2612D8790023592B /* UIButton+Ext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIButton+Ext.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -109,10 +123,12 @@
 		FCC9372225D732EA00A5EAAB /* Goal Tracker */ = {
 			isa = PBXGroup;
 			children = (
+				FCEA72B82612BC8B0023592B /* Utilities */,
 				FCC9380B25DAF63600A5EAAB /* Managers */,
 				FCC937B325DA01A400A5EAAB /* Views */,
 				FCC9374325D7339B00A5EAAB /* Models */,
 				FCC9374125D7336500A5EAAB /* Custom Views */,
+				FCEA72C72612CC510023592B /* Extensions */,
 				FCC9374225D7336F00A5EAAB /* Resources */,
 				FCC9373125D732ED00A5EAAB /* LaunchScreen.storyboard */,
 				FCC9373425D732ED00A5EAAB /* Info.plist */,
@@ -123,12 +139,12 @@
 		FCC9374125D7336500A5EAAB /* Custom Views */ = {
 			isa = PBXGroup;
 			children = (
+				FCEA72C12612BD140023592B /* Views */,
+				FCEA72C02612BD030023592B /* ViewControllers */,
+				FCEA72BF2612BCFA0023592B /* Textfields */,
+				FCEA72BE2612BCF40023592B /* Labels */,
+				FCEA72BD2612BCE90023592B /* Buttons */,
 				FC515F2E260642F6003DCF7F /* cells */,
-				FCC937A725DA016D00A5EAAB /* GoalButton.swift */,
-				FCC937A625DA016D00A5EAAB /* GoalTextField.swift */,
-				FCC937A925DA016D00A5EAAB /* GoalTextLabel.swift */,
-				FC79B47625E4726A00256986 /* ProgressBarView.swift */,
-				FC79B47925E479BB00256986 /* DaysRemainingView.swift */,
 			);
 			path = "Custom Views";
 			sourceTree = "<group>";
@@ -187,6 +203,67 @@
 				FCC9382125DB007E00A5EAAB /* NotesVC.swift */,
 			);
 			path = TabBar;
+			sourceTree = "<group>";
+		};
+		FCEA72B82612BC8B0023592B /* Utilities */ = {
+			isa = PBXGroup;
+			children = (
+				FCEA72B92612BCA20023592B /* Constants.swift */,
+			);
+			path = Utilities;
+			sourceTree = "<group>";
+		};
+		FCEA72BD2612BCE90023592B /* Buttons */ = {
+			isa = PBXGroup;
+			children = (
+				FCC937A725DA016D00A5EAAB /* GoalButton.swift */,
+				FCEA72D12612D22E0023592B /* GainButton.swift */,
+				FCEA72D42612D2370023592B /* LoseButton.swift */,
+			);
+			path = Buttons;
+			sourceTree = "<group>";
+		};
+		FCEA72BE2612BCF40023592B /* Labels */ = {
+			isa = PBXGroup;
+			children = (
+				FCC937A925DA016D00A5EAAB /* GoalTextLabel.swift */,
+			);
+			path = Labels;
+			sourceTree = "<group>";
+		};
+		FCEA72BF2612BCFA0023592B /* Textfields */ = {
+			isa = PBXGroup;
+			children = (
+				FCC937A625DA016D00A5EAAB /* GoalTextField.swift */,
+			);
+			path = Textfields;
+			sourceTree = "<group>";
+		};
+		FCEA72C02612BD030023592B /* ViewControllers */ = {
+			isa = PBXGroup;
+			children = (
+				FC79B47925E479BB00256986 /* DaysRemainingView.swift */,
+			);
+			path = ViewControllers;
+			sourceTree = "<group>";
+		};
+		FCEA72C12612BD140023592B /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				FC79B47625E4726A00256986 /* ProgressBarView.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		FCEA72C72612CC510023592B /* Extensions */ = {
+			isa = PBXGroup;
+			children = (
+				FCEA72C82612CC670023592B /* UIView+Ext.swift */,
+				FCEA72CB2612CC7A0023592B /* UIViewController+Ext.swift */,
+				FCEA72CE2612CC8E0023592B /* CreateGoal+Ext.swift */,
+				FCEA72DB2612D8790023592B /* UIButton+Ext.swift */,
+			);
+			path = Extensions;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -260,8 +337,10 @@
 			files = (
 				FCC937AC25DA016D00A5EAAB /* CollectionViewCell.swift in Sources */,
 				FCC9382225DB007E00A5EAAB /* NotesVC.swift in Sources */,
+				FCEA72CF2612CC8E0023592B /* CreateGoal+Ext.swift in Sources */,
 				FC3DDC0725FDCA7200215342 /* Goal+CoreDataProperties.swift in Sources */,
 				FC3DDC0B25FDCA7200215342 /* Note+CoreDataProperties.swift in Sources */,
+				FCEA72C92612CC670023592B /* UIView+Ext.swift in Sources */,
 				FCC937AA25DA016D00A5EAAB /* GoalTextField.swift in Sources */,
 				FCC9381B25DB003900A5EAAB /* GoalVC.swift in Sources */,
 				FC79B3CB25DCBC4E00256986 /* TableViewCell.swift in Sources */,
@@ -276,14 +355,19 @@
 				FCC9385E25DB998500A5EAAB /* ViewSubGoalVC.swift in Sources */,
 				FCC9372425D732EA00A5EAAB /* AppDelegate.swift in Sources */,
 				FC79B47725E4726A00256986 /* ProgressBarView.swift in Sources */,
+				FCEA72DC2612D8790023592B /* UIButton+Ext.swift in Sources */,
 				FCC9372625D732EA00A5EAAB /* SceneDelegate.swift in Sources */,
 				FCC937AB25DA016D00A5EAAB /* GoalButton.swift in Sources */,
 				FC3DDC0825FDCA7200215342 /* SubGoal+CoreDataClass.swift in Sources */,
 				FC79B3CE25DCD1E500256986 /* ViewNoteVC.swift in Sources */,
 				FCC937AD25DA016D00A5EAAB /* GoalTextLabel.swift in Sources */,
 				FCC9380D25DAF64A00A5EAAB /* DataManager.swift in Sources */,
+				FCEA72D52612D2370023592B /* LoseButton.swift in Sources */,
 				FCC9372E25D732EA00A5EAAB /* Goal_Tracker.xcdatamodeld in Sources */,
+				FCEA72D22612D22E0023592B /* GainButton.swift in Sources */,
 				FCC9382625DB0F5A00A5EAAB /* CreateGoalVC.swift in Sources */,
+				FCEA72CC2612CC7A0023592B /* UIViewController+Ext.swift in Sources */,
+				FCEA72BA2612BCA20023592B /* Constants.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

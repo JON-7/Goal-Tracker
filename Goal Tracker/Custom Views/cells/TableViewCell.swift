@@ -8,6 +8,7 @@
 import UIKit
 
 class TableViewCell: UITableViewCell {
+    static let reuseID = "tableViewCell"
     
     var titleLabel = UILabel()
     var dateLabel = UILabel()

@@ -1,8 +1,8 @@
 //
 //  GoalButton.swift
-//  LayoutFlowDemo
+//  Goal Tracker
 //
-//  Created by Jon E on 2/13/21.
+//  Created by Jon E on 6/5/21.
 //
 
 import UIKit
@@ -20,7 +20,7 @@ class GoalButton: UIButton {
     
     private func configure() {
         translatesAutoresizingMaskIntoConstraints = false
-        backgroundColor = Colors.goalActionBtnColor
+        backgroundColor = .white
         setTitleColor(.black, for: .normal)
         titleLabel?.font = .systemFont(ofSize: 30, weight: .semibold)
         clipsToBounds = true
@@ -30,5 +30,18 @@ class GoalButton: UIButton {
         super.layoutSubviews()
         layer.cornerRadius = bounds.height / 2
     }
-    
+}
+
+extension UIButton {
+    func pulsate() {
+        let pulse = CASpringAnimation(keyPath: "transform.scale")
+        pulse.duration = 0.15
+        pulse.fromValue = 0.95
+        pulse.toValue = 1
+        pulse.autoreverses = false
+        pulse.repeatCount = 0
+        pulse.initialVelocity = 0.9
+        pulse.damping = 1.0
+        layer.add(pulse, forKey: nil)
+    }
 }

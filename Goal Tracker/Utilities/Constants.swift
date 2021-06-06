@@ -33,32 +33,19 @@ enum FormErrorType {
     case missingEndNumber
 }
 
-enum LabelTitle {
-    static let goalLabelTitle = "Goal Name"
-    static let dateLabelTitle = "Goal Date"
-    static let currentNumLabelTitle = "Current Number"
-    static let numGoalLabelTitle = "Goal \nNumber"
-    static let colorLableTitle = "Goal Color"
-    static let gainLoseLabelTitle = "Goal Type"
-}
-
 enum NotificationName {
-    static let reloadData = "reloadDataNotif"
-    static let updateUI = "updateUINotif"
-    static let updateNote = "updateNoteNotif"
+    static let reloadCollectionView = "reloadCollectionViewNotif"
+    static let updateGoalView = "updateProgressBarNotif"
 }
 
-enum AC {
+enum Alerts {
     static let markIncomplete = UIAlertController(title: "Mark As Incomplete?", message: "Do you want to change the status of the goal to INCOMPLETE?", preferredStyle: .alert)
     
     static let markComplete = UIAlertController(title: "Mark As Complete?", message: "Do you want to mark this goal as COMPLETE?", preferredStyle: .alert)
-    
-    static let deleteGoal = UIAlertController(title: "Delete Goal", message: "Are you sure you want to delete this goal?", preferredStyle: .alert)
 }
 
-enum Images {
+enum SFSymbol {
     static let backArrow = UIImage(systemName: "arrow.backward")
     static let pencil = UIImage(systemName: "pencil")
     static let checkmark = UIImage(systemName: "checkmark")
 }
-

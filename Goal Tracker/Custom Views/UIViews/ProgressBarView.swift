@@ -2,13 +2,13 @@
 //  ProgressBarView.swift
 //  Goal Tracker
 //
-//  Created by Jon E on 2/22/21.
+//  Created by Jon E on 6/5/21.
 //
 
 import UIKit
 
 class ProgressBarView: UIView {
-
+    
     let progressLabel = UILabel()
     let shape = CAShapeLayer()
     let backShape = CAShapeLayer()
@@ -20,12 +20,7 @@ class ProgressBarView: UIView {
     var currentValue: String!
     var timer: Timer!
     
-    lazy var containerView: UIView = {
-//        let view = UIView(frame: CGRect(x: 0, y: 0, width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.width))
-        let view = UIView()
-        //view.translatesAutoresizingMaskIntoConstraints = false
-        return view
-    }()
+    lazy var containerView = UIView()
     
     required init(currentNum: Double, endNum: Double, isGainGoal: Bool) {
         super.init(frame: .zero)
@@ -34,7 +29,8 @@ class ProgressBarView: UIView {
         self.isGainGoal = isGainGoal
         percentage = "\(self.getPercentage(self.currentNum!, self.endNum!, isGainGoal: self.isGainGoal).percentage.formatToString)%"
         currentValue = "\(self.currentNum!.formatToString)/\(self.endNum!.formatToString)"
-        addSubview(containerView)
+        
+        
         configureProgress()
         
         timer = Timer.scheduledTimer(timeInterval: 3.0, target: self, selector: #selector(showDetails), userInfo: nil, repeats: true)
@@ -45,19 +41,31 @@ class ProgressBarView: UIView {
     }
     
     func configureProgress() {
+        addSubview(containerView)
+        containerView.translatesAutoresizingMaskIntoConstraints = false
+        
+        NSLayoutConstraint.activate([
+            containerView.topAnchor.constraint(equalTo: self.topAnchor, constant: UIScreen.main.bounds.width/2),
+            containerView.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: UIScreen.main.bounds.width/2),
+            containerView.widthAnchor.constraint(equalToConstant: UIScreen.main.bounds.width),
+            containerView.bottomAnchor.constraint(equalTo: self.bottomAnchor)
+        ])
+        
         configureLabel()
         configureProgressCircle()
         backgroundColor = .secondarySystemBackground
     }
     
     func configureProgressCircle() {
-        let circlePath = UIBezierPath(arcCenter: containerView.center, radius: 150, startAngle: -(.pi / 2), endAngle: .pi * 2, clockwise: true)
+        let centerPoint = CGPoint(x: bounds.midX, y: bounds.midY)
+        let circlePath = UIBezierPath(arcCenter: centerPoint, radius: UIScreen.main.bounds.width/2.4, startAngle: -(.pi / 2), endAngle: .pi * 2, clockwise: true)
         
         backShape.path = circlePath.cgPath
         backShape.fillColor = UIColor.clear.cgColor
         backShape.lineWidth = 40
         backShape.strokeColor = UIColor.tertiarySystemBackground.cgColor
         containerView.layer.addSublayer(backShape)
+        layer.bounds = containerView.bounds
         
         shape.path = circlePath.cgPath
         shape.fillColor = UIColor.clear.cgColor
@@ -118,3 +126,10 @@ class ProgressBarView: UIView {
         self.timer.invalidate()
     }
 }
+
+extension Double {
+    var formatToString: String {
+        return self.truncatingRemainder(dividingBy: 1) == 0 ? String(format: "%.0f", self) : String(format: "%.1f", self)
+    }
+}
+

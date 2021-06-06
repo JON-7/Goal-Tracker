@@ -1,33 +1,25 @@
 //
-//  ViewNoteVC.swift
+//  ViewNoteViewController.swift
 //  Goal Tracker
 //
-//  Created by Jon E on 2/16/21.
+//  Created by Jon E on 6/5/21.
 //
 
 import UIKit
 
-//MARK: The user will view this screen when they are creating a new note
-//and when they are viewing their past notes
+class ViewNoteViewController: UIViewController {
 
-class ViewNoteVC: UIViewController {
-    
     var titleLabel = UILabel()
     var dateLabel = UILabel()
     var noteLabel = UILabel()
+    var noteText = UITextView()
     var currentIndex: Int!
-    var noteText: UITextView = {
-        let textView = UITextView()
-        textView.isEditable = false
-        textView.isScrollEnabled = true
-        return textView
-    }()
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        NotificationCenter.default.addObserver(self, selector: #selector(updateNote), name: NSNotification.Name(NotificationName.updateNote), object: nil)
-        self.navigationController?.interactivePopGestureRecognizer?.delegate = nil
-        self.navigationController?.interactivePopGestureRecognizer?.isEnabled = true
+        NotificationCenter.default.addObserver(self, selector: #selector(updateNote), name: NSNotification.Name("updateNoteNotif"), object: nil)
+        view.backgroundColor = Colors.mainBackgroundColor
+        configureNavBar()
         configureTitleLabel()
         configureDateLabel()
         configureNoteTF()
@@ -35,15 +27,26 @@ class ViewNoteVC: UIViewController {
     
     @objc func updateNote() {
         DispatchQueue.main.async {
-            self.noteText.text = NotesVC.notes[self.currentIndex!].noteText
+            self.noteText.text = DataManager.shared.notes[self.currentIndex!].noteText
+            self.titleLabel.text = DataManager.shared.notes[self.currentIndex!].title
         }
+    }
+    
+    private func configureNavBar() {
+        navigationItem.rightBarButtonItem = .init(image: SFSymbol.pencil, style: .plain, target: self, action: #selector(editNote))
+    }
+    
+    @objc private func editNote() {
+        let note = DataManager.shared.notes[currentIndex]
+        let vc = CreateNoteViewController(action: .edit, goalIndex: 0, noteIndex: currentIndex, noteTitle: note.title ?? "", noteText: note.noteText ?? "")
+        navigationController?.pushViewController(vc, animated: true)
     }
     
     func configureTitleLabel() {
         view.addSubview(titleLabel)
         titleLabel.translatesAutoresizingMaskIntoConstraints = false
         titleLabel.numberOfLines = 2
-        titleLabel.text = NotesVC.notes[currentIndex].title
+        titleLabel.text = DataManager.shared.notes[currentIndex].title
         titleLabel.textAlignment = .center
         titleLabel.font = .systemFont(ofSize: 25, weight: .semibold)
         
@@ -58,7 +61,7 @@ class ViewNoteVC: UIViewController {
     func configureDateLabel() {
         view.addSubview(dateLabel)
         dateLabel.translatesAutoresizingMaskIntoConstraints = false
-        dateLabel.text = "last edited: \(NotesVC.notes[currentIndex].lastEdited ?? "")"
+        dateLabel.text = "last edited: \(DataManager.shared.notes[currentIndex].lastEdited ?? "")"
         dateLabel.textAlignment = .center
         dateLabel.font = .italicSystemFont(ofSize: 15)
         
@@ -71,7 +74,7 @@ class ViewNoteVC: UIViewController {
     
     func configureNoteTF() {
         noteText.translatesAutoresizingMaskIntoConstraints = false
-        noteText.text = NotesVC.notes[currentIndex].noteText
+        noteText.text = DataManager.shared.notes[currentIndex].noteText
         noteText.isEditable = false
         noteText.isScrollEnabled = true
         noteText.textAlignment = .left

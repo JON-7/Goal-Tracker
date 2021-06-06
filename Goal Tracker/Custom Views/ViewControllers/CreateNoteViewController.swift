@@ -1,20 +1,19 @@
 //
-//  CreateNoteVC.swift
+//  CreateNoteViewController.swift
 //  Goal Tracker
 //
-//  Created by Jon E on 2/17/21.
+//  Created by Jon E on 6/5/21.
 //
 
 import UIKit
 
-class CreateNoteVC: UIViewController {
+class CreateNoteViewController: UIViewController {
     
     var action: Action
+    var goalIndex: Int!
+    var noteIndex: Int!
     var noteTitle: String?
     var noteText: String?
-    
-    var goalIndex: Int?
-    var noteIndex: Int?
     
     var titleLabel = UILabel()
     var titleTF = UITextField()
@@ -25,10 +24,12 @@ class CreateNoteVC: UIViewController {
     var currentGoalIndex: Int?
     let padding = CGFloat(10)
     
-    init(action: Action, noteTitle: String, noteText: String) {
+    init(action: Action, goalIndex: Int, noteIndex: Int, noteTitle: String, noteText: String) {
         self.action = action
         self.noteTitle = noteTitle
         self.noteText = noteText
+        self.goalIndex = goalIndex
+        self.noteIndex = noteIndex
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -38,24 +39,30 @@ class CreateNoteVC: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        view.backgroundColor = Colors.mainBackgroundColor
+        configureView()
+    }
+    
+    private func configureView() {
         configureNavigationBar()
         configureTitleLabel()
         configureTitleTF()
         configureNoteLabel()
         configureNoteTF()
+        configureText()
         dismissKeyboardByTap()
     }
     
     func configureNavigationBar() {
         if action == Action.edit {
             navigationItem.rightBarButtonItem = .init(
-                image: Images.checkmark,
+                image: SFSymbol.checkmark,
                 style: .plain,
                 target: self,
                 action: #selector(editNote))
         } else {
             navigationItem.rightBarButtonItem = .init(
-                image: Images.checkmark,
+                image: SFSymbol.checkmark,
                 style: .plain,
                 target: self,
                 action: #selector(createNote))
@@ -84,10 +91,8 @@ class CreateNoteVC: UIViewController {
         titleTF.backgroundColor = Colors.noteTFColor
         titleTF.layer.cornerRadius = 10
         titleTF.textColor = .black
-        
-        if action == Action.edit {
-            titleTF.text = noteTitle
-        }
+        titleTF.setLeftPaddingPoints(10)
+        titleTF.setRightPaddingPoints(10)
         
         NSLayoutConstraint.activate([
             titleTF.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 5),
@@ -119,10 +124,6 @@ class CreateNoteVC: UIViewController {
         noteTF.font = .systemFont(ofSize: 22)
         noteTF.textColor = .black
         
-        if action == Action.edit {
-            noteTF.text = noteText
-        }
-        
         NSLayoutConstraint.activate([
             noteTF.topAnchor.constraint(equalTo: noteLabel.bottomAnchor, constant: 5),
             noteTF.leadingAnchor.constraint(equalTo: view.layoutMarginsGuide.leadingAnchor, constant: padding),
@@ -131,17 +132,24 @@ class CreateNoteVC: UIViewController {
         ])
     }
     
-    @objc func createNote() {
+    private func configureText() {
+        if action == Action.edit {
+            titleTF.text = self.noteTitle
+            noteTF.text = self.noteText
+        }
+    }
+    
+    @objc private func createNote() {
+        var title: String
         if noteTF.text != "" {
-            var title: String
             if titleTF.text != "" {
                 title = titleTF.text!
             } else {
                 title = "Untitled"
             }
             
-            let note = DataManager.shared.note(title: title, lastEdited: formatDate(), noteText: noteTF.text, date: Date(), goal: HomeVC.goals[goalIndex!])
-            NotesVC.notes.append(note)
+            let note = DataManager.shared.note(title: title, lastEdited: formatDate(), noteText: noteTF.text, date: Date(), goal: DataManager.shared.goals[goalIndex])
+            DataManager.shared.notes.append(note)
             DataManager.shared.save()
             navigationController?.popViewController(animated: true)
         }
@@ -150,14 +158,14 @@ class CreateNoteVC: UIViewController {
         }
     }
     
-    @objc func editNote() {
-        NotesVC.notes[noteIndex!].title = titleTF.text
-        NotesVC.notes[noteIndex!].noteText = noteTF.text
-        NotesVC.notes[noteIndex!].lastEdited = formatDate()
-        NotesVC.notes[noteIndex!].date = Date()
+    @objc private func editNote() {
+        DataManager.shared.notes[noteIndex].title = titleTF.text
+        DataManager.shared.notes[noteIndex].noteText = noteTF.text
+        DataManager.shared.notes[noteIndex].lastEdited = formatDate()
+        DataManager.shared.notes[noteIndex].date = Date()
         DataManager.shared.save()
-        navigationController?.popViewController(animated: true)
-        NotificationCenter.default.post(name: NSNotification.Name(NotificationName.updateNote), object: nil)
+        NotificationCenter.default.post(name: Notification.Name(NotificationName.reloadCollectionView), object: nil)
+        navigationController?.popBack(2)
     }
     
     func formatDate() -> String {

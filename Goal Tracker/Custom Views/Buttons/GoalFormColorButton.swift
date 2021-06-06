@@ -1,13 +1,13 @@
 //
-//  LoseButton.swift
+//  GoalFormColorButton.swift
 //  Goal Tracker
 //
-//  Created by Jon E on 3/29/21.
+//  Created by Jon E on 6/5/21.
 //
 
 import UIKit
 
-class LoseButton: UIButton {
+class GoalFormColorButton: UIButton {
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -20,9 +20,9 @@ class LoseButton: UIButton {
     
     private func configure() {
         translatesAutoresizingMaskIntoConstraints = false
-        setTitle("LOSE", for: .normal)
-        setTitleColor(Colors.textColor, for: .normal)
+        clipsToBounds = true
         layer.cornerRadius = 10
-        layer.maskedCorners = [.layerMaxXMaxYCorner, .layerMaxXMinYCorner]
+        layer.maskedCorners = [.layerMaxXMinYCorner, .layerMaxXMaxYCorner]
     }
 }
+

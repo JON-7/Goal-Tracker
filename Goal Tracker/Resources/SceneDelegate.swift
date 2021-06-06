@@ -17,15 +17,8 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         guard let windowScene = (scene as? UIWindowScene) else { return }
         window = UIWindow(frame: windowScene.coordinateSpace.bounds)
         window?.windowScene = windowScene
-        window?.rootViewController = createNav()
+        window?.rootViewController = UINavigationController(rootViewController: HomeViewController())
         window?.makeKeyAndVisible()
-    }
-    
-    func createNav() -> UINavigationController{
-        let vc = HomeVC()
-        let navVC = UINavigationController(rootViewController: vc)
-        navVC.navigationController?.navigationBar.prefersLargeTitles = true
-        return navVC
     }
 
     func sceneDidDisconnect(_ scene: UIScene) {

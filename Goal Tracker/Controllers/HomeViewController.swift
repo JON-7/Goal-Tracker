@@ -66,7 +66,7 @@ extension HomeViewController: UICollectionViewDelegate, UICollectionViewDataSour
             let goal = DataManager.shared.goals[indexPath.item]
             cell.createMainCell(cellTitle: goal.name!, cellColor: goal.cellColor ?? UIColor.lightGray, isComplete: goal.isGoalComplete)
         } else {
-            cell.createGoalCell()
+            cell.createGoalCell(for: .main)
         }
         return cell
     }

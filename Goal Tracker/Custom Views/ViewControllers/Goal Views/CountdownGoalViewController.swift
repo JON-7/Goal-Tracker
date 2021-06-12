@@ -48,7 +48,7 @@ class CountdownGoalViewController: UIViewController {
         goalDateLabel.textColor = goal.cellColor
         countdown.setCountdownTextColor(goal: goal)
         checkGoalStatus()
-                
+        
         view.addSubview(countdown)
         countdown.translatesAutoresizingMaskIntoConstraints = false
         
@@ -107,7 +107,7 @@ class CountdownGoalViewController: UIViewController {
                 }
                 
                 continueCountdown()
-            
+                
             } else {
                 completeButton.pulsate()
                 completeButton.isSelected = true
@@ -190,4 +190,3 @@ class CountdownGoalViewController: UIViewController {
         countdown.setCountdownTextColor(goal: goal)
     }
 }
-

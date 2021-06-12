@@ -56,9 +56,15 @@ class CollectionViewCell: UICollectionViewCell {
         }
     }
     
-    func createGoalCell() {
+    func createGoalCell(for goalType: GoalType) {
+        var cellTitle = ""
+        if goalType == .main {
+            cellTitle = "Create Goal"
+        } else {
+            cellTitle = "Create Sub-Goal"
+        }
         createDefaultCell()
-        let attributeString: NSMutableAttributedString = NSMutableAttributedString(string: "Create Goal")
+        let attributeString: NSMutableAttributedString = NSMutableAttributedString(string: cellTitle)
         textLabel.attributedText = attributeString
         layer.cornerRadius = bounds.height / 2
         textLabel.backgroundColor = Colors.goalActionBtnColor

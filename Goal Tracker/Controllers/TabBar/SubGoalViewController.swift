@@ -19,7 +19,7 @@ class SubGoalViewController: UIViewController {
         }
         self.collectionView.reloadData()
     }
-
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         getStoredSubGoals()
@@ -62,7 +62,7 @@ extension SubGoalViewController: UICollectionViewDelegate, UICollectionViewDataS
             cell.createMainCell(cellTitle: DataManager.shared.subGoals[indexPath.item].name!, cellColor: DataManager.shared.subGoals[indexPath.item].cellColor ?? UIColor.lightGray, isComplete: DataManager.shared.subGoals[indexPath.item].isGoalComplete)
         } else {
             // creating a create goal cell, which is always the last cell
-            cell.createGoalCell()
+            cell.createGoalCell(for: .sub)
         }
         return cell
     }
@@ -77,8 +77,8 @@ extension SubGoalViewController: UICollectionViewDelegate, UICollectionViewDataS
             navigationController?.pushViewController(vc, animated: true)
         } else {
             let vc = GoalInfoViewController(goalIndex: indexPath.item, goalType: .sub)
-                vc.navigationController?.navigationBar.prefersLargeTitles = true
-                vc.title = "Sub-Goal"
+            vc.navigationController?.navigationBar.prefersLargeTitles = true
+            vc.title = "Sub-Goal"
             navigationController?.pushViewController(vc, animated: true)
         }
     }
@@ -117,11 +117,11 @@ extension SubGoalViewController: UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         return CGSize(width: collectionView.bounds.size.width - 30, height: view.bounds.height * 0.11)
     }
-
+    
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
         return 20
     }
-
+    
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
         return UIEdgeInsets.init(top: 10, left: 0, bottom: 0, right: 0)
     }

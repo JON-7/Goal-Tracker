@@ -26,7 +26,9 @@ extension GoalInfoViewController {
             form.datePicker.isHidden = true
             form.removeDateButton.isHidden = true
         } else {
+            form.containsDate = true
             form.datePicker.date = convertStringToDate(stringDate: goal.date ?? "")
+            //form.dateFieldButton.setTitle("", for: .normal)
         }
         
         form.goalNameField.goalTF.text = goal.name

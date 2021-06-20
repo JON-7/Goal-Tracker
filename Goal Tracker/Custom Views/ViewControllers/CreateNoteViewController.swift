@@ -139,7 +139,7 @@ class CreateNoteViewController: UIViewController {
         }
     }
     
-    @objc private func createNote() {
+    @objc func createNote() {
         var title: String
         if noteTF.text != "" {
             if titleTF.text != "" {

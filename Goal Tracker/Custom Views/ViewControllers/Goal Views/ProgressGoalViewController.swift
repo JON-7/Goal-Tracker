@@ -12,6 +12,7 @@ class ProgressGoalViewController: UIViewController {
     let remaining = UILabel()
     let messageLabel = UILabel()
     var progressView = ProgressBarView(currentNum: 0, endNum: 0, isGainGoal: false)
+    var countdownMessage = UILabel()
     var goal: AnyObject!
     
     var goalType: GoalType!
@@ -56,7 +57,12 @@ class ProgressGoalViewController: UIViewController {
         setValues()
         if containsDate {
             configureProgressView()
-            configureCountdown()
+            if progressView.percentage == "100%" {
+                configureMessageLabels()
+                pinMessageLabels()
+            } else {
+                configureCountdown()
+            }
         } else {
             configureMessageLabels()
             configureProgressView()
@@ -96,6 +102,7 @@ class ProgressGoalViewController: UIViewController {
         if view.bounds.width * 2 > view.bounds.height {
             messageLabel.text = remaining.text
             remaining.text = ""
+            
             
             NSLayoutConstraint.activate([
                 messageLabel.topAnchor.constraint(equalTo: progressView.containerView.topAnchor, constant: view.bounds.width/1.9),
@@ -184,23 +191,39 @@ class ProgressGoalViewController: UIViewController {
         countdown.tag = 1
         view.addSubview(countdown)
         countdown.translatesAutoresizingMaskIntoConstraints = false
+        
+        view.addSubview(countdownMessage)
+        countdownMessage.translatesAutoresizingMaskIntoConstraints = false
+        countdownMessage.textAlignment = .center
+        countdownMessage.font = UIFont.systemFont(ofSize: view.bounds.height * (0.1/2.4), weight: .semibold)
+        if countdown.timeDiff <= 0 {
+            countdownMessage.text = "Goal Past Due"
+            countdownMessage.textColor = .red
+            countdown.daysView.timeRemaining.textColor = .red
+            countdown.hoursView.timeRemaining.textColor = .red
+            countdown.minutesView.timeRemaining.textColor = .red
+            countdown.secondsView.timeRemaining.textColor = .red
+        } else {
+            countdownMessage.text = "Time Remaining"
+        }
+        
         NSLayoutConstraint.activate([
-            countdown.topAnchor.constraint(equalTo: progressView.bottomAnchor, constant: 30),
+            countdown.topAnchor.constraint(equalTo: progressView.bottomAnchor, constant: 20),
             countdown.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             countdown.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            countdown.heightAnchor.constraint(equalToConstant: view.bounds.height/8),
+            
+            countdownMessage.topAnchor.constraint(equalTo: countdown.bottomAnchor),
+            countdownMessage.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            countdownMessage.trailingAnchor.constraint(equalTo: view.trailingAnchor),
         ])
     }
     
     func updateProgressView() {
         DispatchQueue.main.async { [self] in
             setValues()
-            if containsDate {
-                configureProgressView()
-                configureCountdown()
-            } else {
-                configureMessageLabels()
-                configureProgressView()
-            }
+            configureMessageLabels()
+            configureProgressView()
             NotificationCenter.default.post(name: Notification.Name(NotificationName.reloadCollectionView), object: nil)
         }
     }

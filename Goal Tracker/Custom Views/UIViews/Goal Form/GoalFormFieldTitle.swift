@@ -25,7 +25,7 @@ class GoalFormFieldTitle: UIView {
         clipsToBounds = true
         layer.cornerRadius = 10
         layer.maskedCorners = [.layerMinXMinYCorner, .layerMinXMaxYCorner]
-        backgroundColor = #colorLiteral(red: 0.1285711527, green: 0.1285960376, blue: 0.1285656989, alpha: 1)
+        backgroundColor = Colors.goalFormTitleColor
     }
     
     private func configureLabel() {
@@ -42,5 +42,4 @@ class GoalFormFieldTitle: UIView {
             titleLabel.centerXAnchor.constraint(equalTo: self.centerXAnchor)
         ])
     }
-    
 }

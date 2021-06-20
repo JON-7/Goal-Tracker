@@ -35,11 +35,13 @@ extension GoalFormViewController {
     }
     
     @objc private func showDatePicker() {
+        dateFieldButton.setTitle("", for: .normal)
         datePicker.isHidden = false
         removeDateButton.isHidden = false
     }
     
     @objc func removeDate() {
+        displayDateOptional()
         removeDateButton.isHidden = true
         datePicker.isHidden = true
         datePicker.date = Date().tomorrow()
@@ -80,7 +82,6 @@ extension GoalFormViewController {
     }
     
     func displayFormErrorMessage(errorType: FormErrorType) {
-        var ac = UIAlertController()
         switch errorType {
         case .emptyNameField:
             ac = UIAlertController(title: "Please Enter a Goal Name", message: "", preferredStyle: .alert)
@@ -90,13 +91,13 @@ extension GoalFormViewController {
             ac = UIAlertController(title: "Enter Final Number Goal", message: "Please enter your final numeric goal or remove the starting number", preferredStyle: .alert)
         }
         
-        let action = UIAlertAction(title: "Continue", style: .default)
+        let action = UIAlertAction(title: "Continue", style: .cancel)
         ac.addAction(action)
         present(ac, animated: true)
     }
     
     func configureDone() -> UIToolbar {
-        let toolBar = UIToolbar()
+        let toolBar = UIToolbar(frame: CGRect(x: 0, y: 0, width: UIScreen.main.bounds.width, height: 35))
         toolBar.sizeToFit()
         let makeSpaceBtn = UIBarButtonItem(barButtonSystemItem: UIBarButtonItem.SystemItem.flexibleSpace, target: nil, action: nil)
         let button = UIBarButtonItem(title: "Done", style: .plain, target: self,
@@ -116,8 +117,8 @@ extension Date {
     func localDate() -> Date {
         let nowUTC = Date()
         let timeZoneOffset = Double(TimeZone.current.secondsFromGMT(for: nowUTC))
-        guard let localDate = Calendar.current.date(byAdding: .second, value: Int(timeZoneOffset), to: nowUTC) else {return Date()}
-
+        guard let localDate = Calendar.current.date(byAdding: .second, value: Int(timeZoneOffset), to: nowUTC) else { return Date()
+        }
         return localDate
     }
     
@@ -126,4 +127,3 @@ extension Date {
         return tomorrow
     }
 }
-

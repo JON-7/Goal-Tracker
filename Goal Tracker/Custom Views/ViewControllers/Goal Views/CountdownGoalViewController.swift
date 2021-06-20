@@ -68,15 +68,15 @@ class CountdownGoalViewController: UIViewController {
         
         if isComplete {
             completeButton.isSelected = true
-            completeButton.backgroundColor = .systemGreen
+            completeButton.backgroundColor = goal.cellColor
             if goalType == .main {
-                completeButton.setTitle("Goal Complete", for: .selected)
+                completeButton.setTitle("Goal Complete", for: .normal)
             } else if goalType == .sub {
-                completeButton.setTitle("Sub-Goal Complete", for: .selected)
+                completeButton.setTitle("Sub-Goal Complete", for: .normal)
             }
-            completeButton.titleLabel?.font = .boldSystemFont(ofSize: 20)
         } else {
-            completeButton.backgroundColor = .lightGray
+            completeButton.backgroundColor = Colors.completeGoalButtonColor
+            completeButton.setTitle("Mark Complete?", for: .normal)
         }
         
         NSLayoutConstraint.activate([
@@ -94,7 +94,13 @@ class CountdownGoalViewController: UIViewController {
             if self.isComplete {
                 completeButton.pulsate()
                 completeButton.isSelected = false
-                completeButton.backgroundColor = .lightGray
+                completeButton.backgroundColor = Colors.completeGoalButtonColor
+                goalTitleLabel.textColor = Colors.textColor
+                if countdown.timeDiff < -1 {
+                    goalTitleLabel.text = "Goal Past Due"
+                    goalTitleLabel.textColor = .red
+                }
+                completeButton.setTitle("Mark Complete?", for: .normal)
                 goalDateLabel.text = goal.date
                 isComplete = false
                 
@@ -107,13 +113,14 @@ class CountdownGoalViewController: UIViewController {
                 }
                 
                 continueCountdown()
-                
             } else {
                 completeButton.pulsate()
                 completeButton.isSelected = true
-                completeButton.backgroundColor = .systemGreen
-                completeButton.titleLabel?.font = .boldSystemFont(ofSize: 20)
+                completeButton.backgroundColor = goal.cellColor
                 goalDateLabel.text = "GOAL COMPLETE"
+                goalTitleLabel.text = goal.name
+                goalTitleLabel.textColor = Colors.textColor
+                completeButton.setTitle("Goal Complete", for: .normal)
                 isComplete = true
                 
                 stopCountdown()
@@ -157,7 +164,12 @@ class CountdownGoalViewController: UIViewController {
     }
     
     private func configureDatePassedLabel() {
-        goalTitleLabel.text = "Since"
+        if isComplete {
+            goalTitleLabel.text = goal.name
+        } else {
+            goalTitleLabel.text = "Goal Past Due"
+            goalTitleLabel.textColor = .red
+        }
     }
     
     private func checkGoalStatus() {

@@ -25,6 +25,8 @@ enum Colors {
     static let mainBackgroundColor = UIColor(named: "mainBackgroundColor")
     static let noteTFColor = UIColor(named: "noteTFColor")
     static let textColor = UIColor(named: "textColor")
+    static let completeGoalButtonColor = UIColor(named: "completeGoalButtonColor")
+    static let goalFormTitleColor = UIColor(named: "goalFormTitleColor")
 }
 
 enum FormErrorType {
@@ -39,9 +41,9 @@ enum NotificationName {
 }
 
 enum Alerts {
-    static let markIncomplete = UIAlertController(title: "Mark As Incomplete?", message: "Do you want to change the status of the goal to INCOMPLETE?", preferredStyle: .alert)
+    static let markIncomplete = UIAlertController(title: "Mark As Incomplete?", message: "Do you wish to change the goal status to INCOMPLETE?", preferredStyle: .alert)
     
-    static let markComplete = UIAlertController(title: "Mark As Complete?", message: "Do you want to mark this goal as COMPLETE?", preferredStyle: .alert)
+    static let markComplete = UIAlertController(title: "Mark As Complete?", message: "Do you wish to mark this goal as COMPLETE?", preferredStyle: .alert)
 }
 
 enum SFSymbol {

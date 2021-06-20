@@ -72,7 +72,6 @@ extension HomeViewController: UICollectionViewDelegate, UICollectionViewDataSour
     }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        // creating new goal
         if indexPath.item == DataManager.shared.goals.count {
             let vc = CreateGoalViewController()
             vc.action = Action.create

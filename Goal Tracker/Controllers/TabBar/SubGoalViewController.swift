@@ -14,7 +14,6 @@ class SubGoalViewController: UIViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         if DataManager.shared.goals.count > 1 {
-            // sorting subgoals by their index number
             DataManager.shared.subGoals.sort(by: {$0.index < $1.index})
         }
         self.collectionView.reloadData()
@@ -26,7 +25,6 @@ class SubGoalViewController: UIViewController {
         configureCollectionView()
     }
     
-    //MARK: Retrieving all sub goals
     private func getStoredSubGoals() {
         if let allSubGoals = DataManager.shared.goals[goalIndex].subGoals?.allObjects as? [SubGoal] {
             DataManager.shared.subGoals = allSubGoals
@@ -50,25 +48,24 @@ class SubGoalViewController: UIViewController {
 
 extension SubGoalViewController: UICollectionViewDelegate, UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        // the number of goals plus the create goal button
+        //the number of goals plus the create goal button
         return DataManager.shared.subGoals.count + 1
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: CollectionViewCell.reuseID, for: indexPath) as! CollectionViewCell
         
-        // creating main cell
         if indexPath.item < DataManager.shared.subGoals.count {
             cell.createMainCell(cellTitle: DataManager.shared.subGoals[indexPath.item].name!, cellColor: DataManager.shared.subGoals[indexPath.item].cellColor ?? UIColor.lightGray, isComplete: DataManager.shared.subGoals[indexPath.item].isGoalComplete)
         } else {
-            // creating a create goal cell, which is always the last cell
+            //create goal cell, which is always the last cell
             cell.createGoalCell(for: .sub)
         }
         return cell
     }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        // presenting create goal screen
+        //presenting create goal screen
         if indexPath.item == DataManager.shared.subGoals.count {
             let vc = CreateGoalViewController()
             vc.action = Action.create
@@ -84,6 +81,7 @@ extension SubGoalViewController: UICollectionViewDelegate, UICollectionViewDataS
     }
     
     //MARK: Touch and drag methods
+    
     func collectionView(_ collectionView: UICollectionView, canMoveItemAt indexPath: IndexPath) -> Bool {
         let lastElement = DataManager.shared.subGoals.count
         if indexPath.item == lastElement {
@@ -96,14 +94,14 @@ extension SubGoalViewController: UICollectionViewDelegate, UICollectionViewDataS
         let item = DataManager.shared.subGoals.remove(at: sourceIndexPath.row)
         DataManager.shared.subGoals.insert(item, at: destinationIndexPath.row)
         
-        // changing the index of all the goals
+        //changing the index of all the goals
         for (index, element) in DataManager.shared.subGoals.enumerated() {
             element.index = Int16(index)
         }
         DataManager.shared.save()
     }
     
-    // Disables the last cell (create sub goal button) from being moved
+    //disables the last cell (create sub-goal button) from being moved
     func collectionView(_ collectionView: UICollectionView, targetIndexPathForMoveFromItemAt originalIndexPath: IndexPath, toProposedIndexPath proposedIndexPath: IndexPath) -> IndexPath {
         if proposedIndexPath.row == DataManager.shared.subGoals.count {
             return IndexPath(row: proposedIndexPath.row - 1, section: proposedIndexPath.section)

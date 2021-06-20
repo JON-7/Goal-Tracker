@@ -25,16 +25,18 @@ class GoalFormViewController: UIViewController {
     let goalColorButton = GoalFormColorButton()
     let colorPicker = UIColorPickerViewController()
     var color: UIColor?
-    let defaultColors = [ #colorLiteral(red: 0.8870380521, green: 0.5724834204, blue: 0.9965009093, alpha: 1), #colorLiteral(red: 0.6950762272, green: 0.8662387729, blue: 0.5456559658, alpha: 1), #colorLiteral(red: 0.7887167931, green: 0.7959396243, blue: 0.9998794198, alpha: 1), #colorLiteral(red: 0.4156676531, green: 0.7495350242, blue: 0.9007849097, alpha: 1) ]
+    let defaultColors = [ #colorLiteral(red: 0.8696990609, green: 0.1960541904, blue: 0.1434972286, alpha: 1), #colorLiteral(red: 0.1998566985, green: 1, blue: 0.3499138355, alpha: 1), #colorLiteral(red: 0.9999932647, green: 0.583832562, blue: 0.003391326172, alpha: 1), #colorLiteral(red: 0, green: 0.6288877726, blue: 0.9007841945, alpha: 1), #colorLiteral(red: 0.5648367405, green: 0.237344414, blue: 0.9931138158, alpha: 1) ]
     
     let goalTypeTitle = GoalFormFieldTitle()
     let gainButton = UIButton()
     let loseButton = UIButton()
     let createButton = GoalButton()
     let deleteButton = GoalButton()
+    var ac = UIAlertController()
     
     var isGoalComplete = false
     var isGainGoal: Bool!
+    var containsDate = false
     var goalAction: Action
     var goalType: GoalType
     var goalIndex: Int!
@@ -132,6 +134,8 @@ class GoalFormViewController: UIViewController {
         dateFieldButton.layer.cornerRadius = 10
         dateFieldButton.layer.maskedCorners = [.layerMaxXMaxYCorner, .layerMaxXMinYCorner]
         
+        if !containsDate { displayDateOptional() }
+        
         view.addSubview(removeDateButton)
         removeDateButton.translatesAutoresizingMaskIntoConstraints = false
         removeDateButton.setTitle("Remove", for: .normal)
@@ -152,6 +156,13 @@ class GoalFormViewController: UIViewController {
             removeDateButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -sidePadding - 15),
             removeDateButton.heightAnchor.constraint(equalToConstant: view.bounds.height * heightMultiplier),
         ])
+    }
+    
+    func displayDateOptional() {
+        dateFieldButton.setTitle("Optional", for: .normal)
+        dateFieldButton.contentHorizontalAlignment = UIControl.ContentHorizontalAlignment.left
+        dateFieldButton.contentEdgeInsets = UIEdgeInsets(top: 0, left: 10, bottom: 0, right: 0)
+        dateFieldButton.setTitleColor(.lightGray, for: .normal)
     }
     
     private func configureCommonFields() {
@@ -175,8 +186,10 @@ class GoalFormViewController: UIViewController {
         goalNameField.goalTF.inputAccessoryView = configureDone()
         currentNumberField.goalTF.keyboardType = .decimalPad
         currentNumberField.goalTF.inputAccessoryView = configureDone()
+        currentNumberField.goalTF.attributedPlaceholder = NSAttributedString(string: "Optional", attributes: [NSAttributedString.Key.foregroundColor : UIColor.lightGray])
         goalNumberField.goalTF.keyboardType = .decimalPad
         goalNumberField.goalTF.inputAccessoryView = configureDone()
+        goalNumberField.goalTF.attributedPlaceholder = NSAttributedString(string: "Optional", attributes: [NSAttributedString.Key.foregroundColor : UIColor.lightGray])
     }
     
     private func configureGoalColorField() {
@@ -230,7 +243,7 @@ class GoalFormViewController: UIViewController {
         view.addSubview(gainButton)
         gainButton.translatesAutoresizingMaskIntoConstraints = false
         gainButton.setTitle("GAIN", for: .normal)
-        gainButton.setTitleColor(.white, for: .normal)
+        gainButton.setTitleColor(Colors.textColor, for: .normal)
         gainButton.addTarget(self, action: #selector(gainPressed), for: .touchUpInside)
         
         DispatchQueue.main.async { [self] in
@@ -256,8 +269,8 @@ class GoalFormViewController: UIViewController {
             if !isGainGoal {
                 gainButton.isSelected = false
                 loseButton.isSelected = true
-                gainButton.backgroundColor = color
-                loseButton.backgroundColor = .tertiarySystemBackground
+                gainButton.backgroundColor = .tertiarySystemBackground
+                loseButton.backgroundColor = color
             }
         }
     }
@@ -336,7 +349,18 @@ class GoalFormViewController: UIViewController {
         ])
     }
     
-    func getDate() -> Date {
-        return date ?? Date()
+    func textFieldDidEndEditing(_ textField: UITextField) {
+        if currentNumberField.goalTF.text == "" && goalNumberField.goalTF.text != "" {
+            currentNumberField.goalTF.placeholder = ""
+        }
+        
+        if currentNumberField.goalTF.text != "" && goalNumberField.goalTF.text == "" {
+            goalNumberField.goalTF.placeholder = ""
+        }
+        
+        if currentNumberField.goalTF.text == "" && goalNumberField.goalTF.text == "" {
+            currentNumberField.goalTF.placeholder = "Optional"
+            goalNumberField.goalTF.placeholder = "Optional"
+        }
     }
 }

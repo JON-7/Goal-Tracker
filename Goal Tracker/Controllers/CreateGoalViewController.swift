@@ -13,7 +13,7 @@ class CreateGoalViewController: UIViewController {
     var action: Action!
     var goalType: GoalType!
     
-    var emptyGoalForm = GoalFormViewController(action: .create, goalType: .main)
+    private var emptyGoalForm = GoalFormViewController(action: .create, goalType: .main)
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -78,7 +78,6 @@ class CreateGoalViewController: UIViewController {
             if let controllers = controllers {
                 self.navigationController?.setViewControllers(controllers, animated: true)
             }
-            
         }
     }
 }

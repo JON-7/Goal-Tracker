@@ -13,7 +13,7 @@ class GoalTabBarController: UITabBarController {
     var goalInfoViewController = GoalInfoViewController(goalIndex: 0, goalType: .main)
     let subGoalsViewController = SubGoalViewController()
     let notesViewController = NotesViewController()
-    let goals = DataManager.shared.goals
+    let goal: AnyObject!
     let form = GoalFormViewController(action: .edit, goalType: .main)
     var tabBarImages = [String]()
     var onlyContainsName = false
@@ -26,6 +26,7 @@ class GoalTabBarController: UITabBarController {
     
     required init(goalIndex: Int) {
         self.goalIndex = goalIndex
+        self.goal = DataManager.shared.goals[goalIndex]
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -57,47 +58,42 @@ class GoalTabBarController: UITabBarController {
     }
     
     private func setTabBarViews() {
-        let goal = DataManager.shared.goals[goalIndex]
-        if goal.startNum == 0.0 && goal.endNum == 0.0 && goal.date == "" {
-            setViewControllers([subGoalsViewController, notesViewController], animated: true)
-            tabBarImages = ["applescript", "note.text"]
-            title = "Sub-Goals"
-            onlyContainsName = true
-        } else {
-            setViewControllers([goalInfoViewController, subGoalsViewController, notesViewController], animated: true)
-            tabBarImages = ["scroll.fill","applescript", "note.text"]
-            setTitle()
-        }
+        setViewControllers([goalInfoViewController, subGoalsViewController, notesViewController], animated: true)
+        tabBarImages = ["scroll.fill","applescript", "note.text"]
+        setTitle()
     }
     
     @objc func editGoal() {
-        if String(goals[goalIndex].startNum) == "0.0" {
+        if String(goal.startNum) == "0.0" {
             form.currentNumberField.goalTF.text = ""
         } else {
-            form.currentNumberField.goalTF.text = String(goals[goalIndex].startNum.formatToString)
+            form.currentNumberField.goalTF.text = String(goal.startNum.formatToString)
         }
         
-        if String(goals[goalIndex].endNum) == "0.0" {
+        if String(goal.endNum) == "0.0" {
             form.goalNumberField.goalTF.text = ""
         } else {
-            form.goalNumberField.goalTF.text = String(goals[goalIndex].endNum.formatToString)
+            form.goalNumberField.goalTF.text = String(goal.endNum.formatToString)
         }
         
-        if goals[goalIndex].date == "" {
+        if goal.date == "" {
             form.datePicker.isHidden = true
             form.removeDateButton.isHidden = true
         } else {
-            form.datePicker.date = convertStringToDate(stringDate: goals[goalIndex].date ?? "")
+            form.containsDate = true
+            form.datePicker.date = convertStringToDate(stringDate: goal.date ?? "")
+            DispatchQueue.main.async { [self] in
+                form.dateFieldButton.setTitle("", for: .normal)
+            }
         }
         
-        if goals[goalIndex].isGoalComplete {
+        if goal.isGoalComplete {
             form.isGoalComplete = true
         }
         
-        form.goalNameField.goalTF.text = goals[goalIndex].name
-        form.color = goals[goalIndex].cellColor
-        form.isGainGoal = goals[goalIndex].isGainGoal
-        form.goalColorButton.backgroundColor = goals[goalIndex].cellColor
+        form.goalNameField.goalTF.text = goal.name
+        form.color = goal.cellColor
+        form.isGainGoal = goal.isGainGoal
         form.createButton.addTarget(self, action: #selector(saveInfo), for: .touchUpInside)
         form.deleteButton.addTarget(self, action: #selector(showWarning), for: .touchUpInside)
         NotificationCenter.default.post(name: Notification.Name(NotificationName.reloadCollectionView), object: nil)
@@ -106,18 +102,19 @@ class GoalTabBarController: UITabBarController {
     
     @objc private func saveInfo() {
         guard form.isAllDataValid() else { return }
-        goals[goalIndex].name = form.goalNameField.goalTF.text
-        goals[goalIndex].startNum = Double(form.currentNumberField.goalTF.text!) ?? 0
-        goals[goalIndex].endNum = Double(form.goalNumberField.goalTF.text!) ?? 0
-        goals[goalIndex].cellColor = form.color
-        goals[goalIndex].isGainGoal = form.isGainGoal
-        goals[goalIndex].isGoalComplete = getGoalStatus()
-        if form.datePicker.isHidden {
-            goals[goalIndex].date = ""
-        } else {
-            goals[goalIndex].date = convertDateToString(date: form.datePicker.date)
+        if let mainGoal = goal as? Goal {
+            mainGoal.name = form.goalNameField.goalTF.text
+            mainGoal.startNum = Double(form.currentNumberField.goalTF.text!) ?? 0
+            mainGoal.endNum = Double(form.goalNumberField.goalTF.text!) ?? 0
+            mainGoal.cellColor = form.color
+            mainGoal.isGainGoal = form.isGainGoal
+            
+            if form.datePicker.isHidden {
+                mainGoal.date = ""
+            } else {
+                mainGoal.date = convertDateToString(date: form.datePicker.date)
+            }
         }
-        
         DataManager.shared.save()
         postNotifications()
         navigationController?.popViewController(animated: true)
@@ -138,7 +135,6 @@ class GoalTabBarController: UITabBarController {
         ac.addAction(delete)
         ac.addAction(cancel)
         present(ac, animated: true)
-        
     }
     
     private func deleteGoal() {
@@ -174,7 +170,6 @@ class GoalTabBarController: UITabBarController {
     override func tabBar(_ tabBar: UITabBar, didSelect item: UITabBarItem) {
         if item.tag == 0 {
             navigationController?.navigationBar.topItem?.title = currentTitle
-            
             navigationItem.rightBarButtonItem = .init(image: SFSymbol.pencil, style: .plain, target: self, action: #selector(editGoal))
         } else if item.tag == 1 {
             navigationController?.navigationBar.topItem?.title = "Sub-Goals"
@@ -187,29 +182,5 @@ class GoalTabBarController: UITabBarController {
             navigationController?.navigationBar.topItem?.title = "Notes"
             navigationItem.rightBarButtonItem = .init(barButtonSystemItem: .add, target: self, action: #selector(showNotes))
         }
-    }
-    
-    func getGoalStatus() -> Bool {
-        
-        if form.isGainGoal {
-            if (Double(form.currentNumberField.goalTF.text!) ?? 0 >= Double(form.goalNumberField.goalTF.text!) ?? 0) && form.currentNumberField.goalTF.text != "" && form.goalNumberField.goalTF.text != "" {
-                print(1)
-                return true
-            }
-        } else if !form.isGainGoal {
-            if Double(form.currentNumberField.goalTF.text!) ?? 0 <= Double(form.goalNumberField.goalTF.text!) ?? 0 {
-                print(2)
-                return true
-            }
-        }
-
-        
-        
-//        if form.isGoalComplete {
-//            print(3)
-//            return true
-//        }
-        
-        return false
     }
 }

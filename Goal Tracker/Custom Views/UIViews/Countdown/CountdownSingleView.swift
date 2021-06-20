@@ -26,6 +26,7 @@ class CountdownSingleView: UIView {
         timeRemaining.translatesAutoresizingMaskIntoConstraints = false
         timeRemaining.textAlignment = .center
         timeRemaining.font = UIFont.systemFont(ofSize: UIScreen.main.bounds.height * (0.1/2.4), weight: .semibold)
+        timeRemaining.adjustsFontSizeToFitWidth = true
         
         addSubview(timeTitle)
         timeTitle.translatesAutoresizingMaskIntoConstraints = false

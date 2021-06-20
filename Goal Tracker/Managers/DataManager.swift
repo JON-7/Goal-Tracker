@@ -17,7 +17,6 @@ class DataManager {
     var subGoals = [SubGoal]()
     var notes = [Note]()
     
-
     lazy var persistentContainer: NSPersistentContainer = {
         let container = NSPersistentContainer(name: "Goal_Tracker")
         container.loadPersistentStores(completionHandler: { (storeDescription, error) in
@@ -44,6 +43,7 @@ class DataManager {
     
     func fetchGoals() -> [Goal] {
         let request: NSFetchRequest<Goal> = Goal.fetchRequest()
+        // retrieving goals based on their index
         let deseptor = NSSortDescriptor(key: "index", ascending: true)
         request.sortDescriptors = [deseptor]
         var fetchGoals = [Goal]()
@@ -51,7 +51,7 @@ class DataManager {
             fetchGoals = try persistentContainer.viewContext.fetch(request)
         }
         catch {
-            print("error fetching budgets")
+            print("error fetching goals")
         }
         return fetchGoals
     }
@@ -87,12 +87,9 @@ class DataManager {
             do {
                 try context.save()
             } catch {
-                // Replace this implementation with code to handle the error appropriately.
-                // fatalError() causes the application to generate a crash log and terminate. You should not use this function in a shipping application, although it may be useful during development.
                 let nserror = error as NSError
                 fatalError("Unresolved error \(nserror), \(nserror.userInfo)")
             }
         }
     }
-
 }
